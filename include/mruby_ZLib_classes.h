@@ -1,0 +1,73 @@
+#ifndef MRUBY_ZLib_CLASSES_HEADER
+#define MRUBY_ZLib_CLASSES_HEADER
+
+#define BIND_GzHeader_TYPE TRUE
+#define BIND_GzHeader_INITIALIZE TRUE
+#define BIND_GzHeader_text_FIELD_READER TRUE
+#define BIND_GzHeader_text_FIELD_WRITER TRUE
+#define BIND_GzHeader_time_FIELD_READER TRUE
+#define BIND_GzHeader_time_FIELD_WRITER TRUE
+#define BIND_GzHeader_xflags_FIELD_READER TRUE
+#define BIND_GzHeader_xflags_FIELD_WRITER TRUE
+#define BIND_GzHeader_os_FIELD_READER TRUE
+#define BIND_GzHeader_os_FIELD_WRITER TRUE
+#define BIND_GzHeader_extra_FIELD_READER FALSE
+#define BIND_GzHeader_extra_FIELD_WRITER FALSE
+#define BIND_GzHeader_extra_len_FIELD_READER FALSE
+#define BIND_GzHeader_extra_len_FIELD_WRITER FALSE
+#define BIND_GzHeader_extra_max_FIELD_READER FALSE
+#define BIND_GzHeader_extra_max_FIELD_WRITER FALSE
+#define BIND_GzHeader_name_FIELD_READER FALSE
+#define BIND_GzHeader_name_FIELD_WRITER FALSE
+#define BIND_GzHeader_name_max_FIELD_READER FALSE
+#define BIND_GzHeader_name_max_FIELD_WRITER FALSE
+#define BIND_GzHeader_comment_FIELD_READER FALSE
+#define BIND_GzHeader_comment_FIELD_WRITER FALSE
+#define BIND_GzHeader_comm_max_FIELD_READER FALSE
+#define BIND_GzHeader_comm_max_FIELD_WRITER FALSE
+#define BIND_GzHeader_hcrc_FIELD_READER TRUE
+#define BIND_GzHeader_hcrc_FIELD_WRITER TRUE
+#define BIND_GzHeader_done_FIELD_READER TRUE
+#define BIND_GzHeader_done_FIELD_WRITER TRUE
+
+#define BIND_GzFile_TYPE TRUE
+#define BIND_GzFile_INITIALIZE TRUE
+
+#define BIND_GzFileS_TYPE TRUE
+#define BIND_GzFileS_INITIALIZE TRUE
+
+#define BIND_InternalState_TYPE TRUE
+#define BIND_InternalState_INITIALIZE TRUE
+
+#define BIND_ZStream_TYPE TRUE
+#define BIND_ZStream_INITIALIZE TRUE
+#define BIND_ZStream_next_in_FIELD_READER TRUE
+#define BIND_ZStream_next_in_FIELD_WRITER TRUE
+#define BIND_ZStream_avail_in_FIELD_READER FALSE
+#define BIND_ZStream_avail_in_FIELD_WRITER FALSE
+#define BIND_ZStream_total_in_FIELD_READER TRUE
+#define BIND_ZStream_total_in_FIELD_WRITER TRUE
+#define BIND_ZStream_next_out_FIELD_READER FALSE
+#define BIND_ZStream_next_out_FIELD_WRITER FALSE
+#define BIND_ZStream_avail_out_FIELD_READER FALSE
+#define BIND_ZStream_avail_out_FIELD_WRITER FALSE
+#define BIND_ZStream_total_out_FIELD_READER TRUE
+#define BIND_ZStream_total_out_FIELD_WRITER TRUE
+#define BIND_ZStream_msg_FIELD_READER FALSE
+#define BIND_ZStream_msg_FIELD_WRITER FALSE
+#define BIND_ZStream_state_FIELD_READER TRUE
+#define BIND_ZStream_state_FIELD_WRITER TRUE
+#define BIND_ZStream_zalloc_FIELD_READER FALSE
+#define BIND_ZStream_zalloc_FIELD_WRITER FALSE
+#define BIND_ZStream_zfree_FIELD_READER FALSE
+#define BIND_ZStream_zfree_FIELD_WRITER FALSE
+#define BIND_ZStream_opaque_FIELD_READER FALSE
+#define BIND_ZStream_opaque_FIELD_WRITER FALSE
+#define BIND_ZStream_data_type_FIELD_READER TRUE
+#define BIND_ZStream_data_type_FIELD_WRITER TRUE
+#define BIND_ZStream_adler_FIELD_READER TRUE
+#define BIND_ZStream_adler_FIELD_WRITER TRUE
+#define BIND_ZStream_reserved_FIELD_READER TRUE
+#define BIND_ZStream_reserved_FIELD_WRITER TRUE
+
+#endif
