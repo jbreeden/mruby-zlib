@@ -17,12 +17,9 @@
 #if BIND_ZStream_INITIALIZE
 mrb_value
 mrb_ZLib_ZStream_initialize(mrb_state* mrb, mrb_value self) {
-  mrb_raise(mrb, E_NOMETHOD_ERROR, "No initializer defined");
-/* 
   z_stream* native_object = (z_stream*)calloc(1, sizeof(z_stream));
   mruby_gift_z_stream_data_ptr(self, native_object);
   return self;
-*/
 }
 #endif
 /* MRUBY_BINDING_END */

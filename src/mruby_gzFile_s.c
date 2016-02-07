@@ -1,22 +1,23 @@
-/*
+/* - MRUBY_BINDINGS_NO_CLOBBER -
+ *
  * struct gzFile_s
- * Defined in file zlib.h @ line 1224
+ * Defined in file zlib.h @ line 1220
  */
 
 #include "mruby_ZLib.h"
 
-#if BIND_GzFileS_TYPE
+#if BIND_GZFile_TYPE
 
 /* MRUBY_BINDING: header */
 /* sha: user_defined */
 
 /* MRUBY_BINDING_END */
 
-/* MRUBY_BINDING: GzFileS::initialize */
-/* sha: 676076331d163890a420b304ed75fdd03af19733830e6994c3b61b5b1264cf7f */
-#if BIND_GzFileS_INITIALIZE
+/* MRUBY_BINDING: GZFile::initialize */
+/* sha: cf8f931114848506ff40be8babe93afdf8eebeaae7e7b2a9fa8d14c85a0a5ffa */
+#if BIND_GZFile_INITIALIZE
 mrb_value
-mrb_ZLib_GzFileS_initialize(mrb_state* mrb, mrb_value self) {
+mrb_ZLib_GZFile_initialize(mrb_state* mrb, mrb_value self) {
   mrb_raise(mrb, E_NOMETHOD_ERROR, "No initializer defined");
 /* 
   struct gzFile_s* native_object = (struct gzFile_s*)calloc(1, sizeof(struct gzFile_s));
@@ -28,7 +29,7 @@ mrb_ZLib_GzFileS_initialize(mrb_state* mrb, mrb_value self) {
 /* MRUBY_BINDING_END */
 
 
-void mrb_ZLib_GzFileS_init(mrb_state* mrb) {
+void mrb_ZLib_GZFile_init(mrb_state* mrb) {
   static int initialized = 0;
   if (initialized) return;
   else initialized = 1;
@@ -38,27 +39,27 @@ void mrb_ZLib_GzFileS_init(mrb_state* mrb) {
 
 /* MRUBY_BINDING_END */
 
-/* MRUBY_BINDING: GzFileS::class_definition */
-/* sha: d7df6c2587fd3cf63e2aa992f4d22d180f7a6dcd48b2c453b35a32413a8b9a2f */
-  struct RClass* GzFileS_class = mrb_define_class_under(mrb, ZLib_module(mrb), "GzFileS", mrb->object_class);
-  MRB_SET_INSTANCE_TT(GzFileS_class, MRB_TT_DATA);
+/* MRUBY_BINDING: GZFile::class_definition */
+/* sha: e03f02e65c89166e4270e007a36d6124bfa9491cada6a19bc4cc994e0bf5b64f */
+  struct RClass* GZFile_class = mrb_define_class_under(mrb, ZLib_module(mrb), "GZFile", mrb->object_class);
+  MRB_SET_INSTANCE_TT(GZFile_class, MRB_TT_DATA);
 /* MRUBY_BINDING_END */
 
-/* MRUBY_BINDING: GzFileS::pre_class_method_definitions */
+/* MRUBY_BINDING: GZFile::pre_class_method_definitions */
 /* sha: user_defined */
 
 /* MRUBY_BINDING_END */
 
-/* MRUBY_BINDING: GzFileS::class_method_definitions */
-/* sha: 2546d922ce276996c5bfeb1b5ce351c9771af533f5bddddb96775f01044ba886 */
-#if BIND_GzFileS_INITIALIZE
-  mrb_define_method(mrb, GzFileS_class, "initialize", mrb_ZLib_GzFileS_initialize, MRB_ARGS_NONE());
+/* MRUBY_BINDING: GZFile::class_method_definitions */
+/* sha: 3528b1e24c76ac3fb0c405e25cba046eb57e7e3aaab9f16eb5a0d38df3e92e55 */
+#if BIND_GZFile_INITIALIZE
+  mrb_define_method(mrb, GZFile_class, "initialize", mrb_ZLib_GZFile_initialize, MRB_ARGS_NONE());
 #endif
 /* MRUBY_BINDING_END */
 
 
 
-/* MRUBY_BINDING: GzFileS::post_class_definition */
+/* MRUBY_BINDING: GZFile::post_class_definition */
 /* sha: user_defined */
 
 /* MRUBY_BINDING_END */

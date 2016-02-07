@@ -18,10 +18,10 @@
 #   self.boxing_fn.cleanup_template = 'free(%{value});'
 # end
 
-## This block is called to determine the Ruby class name to use for a C type.
-# CTypes.translate_type_names do |name|
-#   MRubyBindings.type_name_to_rb_class(name)
-# end
+# This block is called to determine the Ruby class name to use for a C type.
+CTypes.translate_type_names do |name|
+  MRubyBindings.type_name_to_rb_class(name).sub(/^Gz/, 'GZ')
+end
 
 ## This block is called to determine the Ruby method name to use for a C function.
 # CTypes.translate_fn_names do |name|

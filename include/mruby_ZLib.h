@@ -41,7 +41,8 @@
 
 /* MRUBY_BINDING: post_includes */
 /* sha: user_defined */
-
+#undef BIND_GZFile_INITIALIZE
+#define BIND_GZFile_INITIALIZE TRUE
 /* MRUBY_BINDING_END */
 
 /*
@@ -57,13 +58,20 @@
 /* MRUBY_BINDING_END */
 
 /* MRUBY_BINDING: class_macros */
-/* sha: e6204699f59b76f30ddea4f1eea5bb0584aa69aac55268450b325eabd1f477bb */
+/* sha: 23169abb3cc59dd79b0ec773a09fc761b3330e97655f5d6bc3c206dbc1c8e5a4 */
+/* EDITED */
 #define ZLib_module(mrb) mrb_module_get(mrb, "ZLib")
-#define GzFile_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "GzFile")
-#define GzFileS_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "GzFileS")
-#define GzHeader_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "GzHeader")
+#define GZFile_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "GZFile")
+#define GZHeader_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "GZHeader")
 #define InternalState_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "InternalState")
 #define ZStream_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZStream")
+#define ZError_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZError")
+#define ZSystemCallError_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZSystemCallError")
+#define ZStreamError_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZStreamError")
+#define ZBufferError_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZBufferError")
+#define ZDataError_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZDataError")
+#define ZMemoryError_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZMemoryError")
+#define ZVersionError_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZVersionError")
 /* MRUBY_BINDING_END */
 
 /* MRUBY_BINDING: post_class_macros */
@@ -77,20 +85,30 @@
  */
 
 /* MRUBY_BINDING: pre_class_init_decls */
-/* sha: user_defined */
-
+/* sha: 694807446c1a191b0a25d46c63cbd96bc881afb2ca2becdda469cfcd05ad7d22 */
+/* EDITED */
+#if BIND_GZFile_TYPE
+void mrb_ZLib_GZFile_init(mrb_state* mrb);
+#endif
+#if BIND_GZHeader_TYPE
+void mrb_ZLib_GZHeader_init(mrb_state* mrb);
+#endif
+#if BIND_InternalState_TYPE
+void mrb_ZLib_InternalState_init(mrb_state* mrb);
+#endif
+#if BIND_ZStream_TYPE
+void mrb_ZLib_ZStream_init(mrb_state* mrb);
+#endif
 /* MRUBY_BINDING_END */
 
 /* MRUBY_BINDING: pre_class_init_decls */
-/* sha: 266af0f99fb28d534cf36d6e95f529f659421a6507668c80442a5a216b44c66d */
-#if BIND_GzFile_TYPE
-void mrb_ZLib_GzFile_init(mrb_state* mrb);
+/* sha: 694807446c1a191b0a25d46c63cbd96bc881afb2ca2becdda469cfcd05ad7d22 */
+/* EDITED */
+#if BIND_GZFile_TYPE
+void mrb_ZLib_GZFile_init(mrb_state* mrb);
 #endif
-#if BIND_GzFileS_TYPE
-void mrb_ZLib_GzFileS_init(mrb_state* mrb);
-#endif
-#if BIND_GzHeader_TYPE
-void mrb_ZLib_GzHeader_init(mrb_state* mrb);
+#if BIND_GZHeader_TYPE
+void mrb_ZLib_GZHeader_init(mrb_state* mrb);
 #endif
 #if BIND_InternalState_TYPE
 void mrb_ZLib_InternalState_init(mrb_state* mrb);

@@ -1,40 +1,40 @@
 #ifndef MRUBY_ZLib_CLASSES_HEADER
 #define MRUBY_ZLib_CLASSES_HEADER
 
-#define BIND_GzHeader_TYPE TRUE
-#define BIND_GzHeader_INITIALIZE TRUE
-#define BIND_GzHeader_text_FIELD_READER TRUE
-#define BIND_GzHeader_text_FIELD_WRITER TRUE
-#define BIND_GzHeader_time_FIELD_READER TRUE
-#define BIND_GzHeader_time_FIELD_WRITER TRUE
-#define BIND_GzHeader_xflags_FIELD_READER TRUE
-#define BIND_GzHeader_xflags_FIELD_WRITER TRUE
-#define BIND_GzHeader_os_FIELD_READER TRUE
-#define BIND_GzHeader_os_FIELD_WRITER TRUE
-#define BIND_GzHeader_extra_FIELD_READER FALSE
-#define BIND_GzHeader_extra_FIELD_WRITER FALSE
-#define BIND_GzHeader_extra_len_FIELD_READER FALSE
-#define BIND_GzHeader_extra_len_FIELD_WRITER FALSE
-#define BIND_GzHeader_extra_max_FIELD_READER FALSE
-#define BIND_GzHeader_extra_max_FIELD_WRITER FALSE
-#define BIND_GzHeader_name_FIELD_READER FALSE
-#define BIND_GzHeader_name_FIELD_WRITER FALSE
-#define BIND_GzHeader_name_max_FIELD_READER FALSE
-#define BIND_GzHeader_name_max_FIELD_WRITER FALSE
-#define BIND_GzHeader_comment_FIELD_READER FALSE
-#define BIND_GzHeader_comment_FIELD_WRITER FALSE
-#define BIND_GzHeader_comm_max_FIELD_READER FALSE
-#define BIND_GzHeader_comm_max_FIELD_WRITER FALSE
-#define BIND_GzHeader_hcrc_FIELD_READER TRUE
-#define BIND_GzHeader_hcrc_FIELD_WRITER TRUE
-#define BIND_GzHeader_done_FIELD_READER TRUE
-#define BIND_GzHeader_done_FIELD_WRITER TRUE
+#define BIND_GZHeader_TYPE TRUE
+#define BIND_GZHeader_INITIALIZE TRUE
+#define BIND_GZHeader_text_FIELD_READER TRUE
+#define BIND_GZHeader_text_FIELD_WRITER TRUE
+#define BIND_GZHeader_time_FIELD_READER TRUE
+#define BIND_GZHeader_time_FIELD_WRITER TRUE
+#define BIND_GZHeader_xflags_FIELD_READER TRUE
+#define BIND_GZHeader_xflags_FIELD_WRITER TRUE
+#define BIND_GZHeader_os_FIELD_READER TRUE
+#define BIND_GZHeader_os_FIELD_WRITER TRUE
+#define BIND_GZHeader_extra_FIELD_READER FALSE
+#define BIND_GZHeader_extra_FIELD_WRITER FALSE
+#define BIND_GZHeader_extra_len_FIELD_READER FALSE
+#define BIND_GZHeader_extra_len_FIELD_WRITER FALSE
+#define BIND_GZHeader_extra_max_FIELD_READER FALSE
+#define BIND_GZHeader_extra_max_FIELD_WRITER FALSE
+#define BIND_GZHeader_name_FIELD_READER FALSE
+#define BIND_GZHeader_name_FIELD_WRITER FALSE
+#define BIND_GZHeader_name_max_FIELD_READER FALSE
+#define BIND_GZHeader_name_max_FIELD_WRITER FALSE
+#define BIND_GZHeader_comment_FIELD_READER FALSE
+#define BIND_GZHeader_comment_FIELD_WRITER FALSE
+#define BIND_GZHeader_comm_max_FIELD_READER FALSE
+#define BIND_GZHeader_comm_max_FIELD_WRITER FALSE
+#define BIND_GZHeader_hcrc_FIELD_READER TRUE
+#define BIND_GZHeader_hcrc_FIELD_WRITER TRUE
+#define BIND_GZHeader_done_FIELD_READER TRUE
+#define BIND_GZHeader_done_FIELD_WRITER TRUE
 
-#define BIND_GzFile_TYPE TRUE
-#define BIND_GzFile_INITIALIZE TRUE
+#define BIND_GZFile_TYPE TRUE
+#define BIND_GZFile_INITIALIZE TRUE
 
-#define BIND_GzFileS_TYPE TRUE
-#define BIND_GzFileS_INITIALIZE TRUE
+#define BIND_GZFile_TYPE TRUE
+#define BIND_GZFile_INITIALIZE TRUE
 
 #define BIND_InternalState_TYPE TRUE
 #define BIND_InternalState_INITIALIZE TRUE

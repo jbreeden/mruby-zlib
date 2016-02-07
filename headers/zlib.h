@@ -220,9 +220,8 @@ typedef gz_header FAR *gz_headerp;
    is automatically made by deflateInit and inflateInit.
  */
 
-/*
 ZEXTERN int ZEXPORT deflateInit (z_stream * strm, int level);
-
+/*
      Initializes the internal stream state for compression.  The fields
    zalloc, zfree and opaque must be initialized before by the caller.  If
    zalloc and zfree are set to Z_NULL, deflateInit updates them to use default
@@ -364,9 +363,8 @@ ZEXTERN int ZEXPORT deflateInit (z_stream * strm, int level);
 */
 
 
-/*
 ZEXTERN int ZEXPORT inflateInit (z_stream * strm);
-
+/*
      Initializes the internal stream state for decompression.  The fields
    next_in, avail_in, zalloc, zfree and opaque must be initialized before by
    the caller.  If next_in is not Z_NULL and avail_in is large enough (the
@@ -523,14 +521,13 @@ ZEXTERN int ZEXPORT inflateInit (z_stream * strm);
     The following functions are needed only in some special applications.
 */
 
-/*
 ZEXTERN int ZEXPORT deflateInit2 (z_stream * strm,
                                      int  level,
                                      int  method,
                                      int  windowBits,
                                      int  memLevel,
                                      int  strategy);
-
+/*
      This is another version of deflateInit with more compression options.  The
    fields next_in, zalloc, zfree and opaque must be initialized before by the
    caller.
@@ -766,10 +763,9 @@ ZEXTERN int ZEXPORT deflateSetHeader (z_stream * strm,
    stream state was inconsistent.
 */
 
-/*
 ZEXTERN int ZEXPORT inflateInit2 (z_stream * strm,
                                      int  windowBits);
-
+/*
      This is another version of inflateInit with an extra parameter.  The
    fields next_in, avail_in, zalloc, zfree and opaque must be initialized
    before by the caller.
@@ -1223,9 +1219,8 @@ ZEXTERN int ZEXPORT uncompress (Bytef *dest,   uLongf *destLen,
 
 typedef struct gzFile_s gzFile;    /* semi-opaque gzip file descriptor */
 
-/*
 ZEXTERN gzFile * ZEXPORT gzopen (const char *path, const char *mode);
-
+/*
      Opens a gzip (.gz) file for reading or writing.  The mode parameter is as
    in fopen ("rb" or "wb") but can also include a compression level ("wb9") or
    a strategy: 'f' for filtered data as in "wb6f", 'h' for Huffman-only
@@ -1424,10 +1419,9 @@ ZEXTERN int ZEXPORTVA gzprintf Z_ARG((gzFile * file, const char *format, ...));
    degrade compression if called too often.
 */
 
-/*
 ZEXTERN z_off_t ZEXPORT gzseek (gzFile * file,
                                    z_off_t offset, int whence);
-
+/*
      Sets the starting position for the next gzread or gzwrite on the given
    compressed file.  The offset represents a number of bytes in the
    uncompressed data stream.  The whence parameter is defined as in lseek(2);
@@ -1451,8 +1445,8 @@ ZEXTERN z_off_t ZEXPORT gzseek (gzFile * file,
      gzrewind(file) is equivalent to (int)gzseek(file, 0L, SEEK_SET)
 */
 
-/*
 ZEXTERN z_off_t ZEXPORT    gztell (gzFile * file);
+/*
 
      Returns the starting position for the next gzread or gzwrite on the given
    compressed file.  This position represents a number of bytes in the
@@ -1462,9 +1456,8 @@ ZEXTERN z_off_t ZEXPORT    gztell (gzFile * file);
      gztell(file) is equivalent to gzseek(file, 0L, SEEK_CUR)
 */
 
-/*
 ZEXTERN z_off_t ZEXPORT gzoffset (gzFile * file);
-
+/*
      Returns the current offset in the file being read or written.  This offset
    includes the count of bytes that precede the gzip stream, for example when
    appending or when using gzdopen() for reading.  When reading, the offset
@@ -1585,10 +1578,9 @@ ZEXTERN z_off_t ZEXPORT gzoffset (gzFile * file);
      if (adler != original_adler) error();
 */
 
-/*
 ZEXTERN uLong ZEXPORT adler32_combine (uLong adler1, uLong adler2,
                                           z_off_t len2);
-
+/*
      Combine two Adler-32 checksums into one.  For two sequences of bytes, seq1
    and seq2 with lengths len1 and len2, Adler-32 checksums were calculated for
    each, adler1 and adler2.  adler32_combine() returns the Adler-32 checksum of
@@ -1614,9 +1606,8 @@ ZEXTERN uLong ZEXPORT adler32_combine (uLong adler1, uLong adler2,
      if (crc != original_crc) error();
 */
 
-/*
 ZEXTERN uLong ZEXPORT crc32_combine (uLong crc1, uLong crc2, z_off_t len2);
-
+/*
      Combine two CRC-32 check values into one.  For two sequences of bytes,
    seq1 and seq2 with lengths len1 and len2, CRC-32 check values were
    calculated for each, crc1 and crc2.  crc32_combine() returns the CRC-32

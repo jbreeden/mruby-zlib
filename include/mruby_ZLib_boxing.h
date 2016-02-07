@@ -41,9 +41,9 @@ typedef struct mruby_to_native_ref_ {
   void* data;
 } mruby_to_native_ref;
 
-/* MRUBY_BINDING: GzFile::boxing_decls */
-/* sha: 158aab2e661485b843761756d667ea9c02df0b0f976d55c6c2da91929887dff5 */
-#if BIND_GzFile_TYPE
+/* MRUBY_BINDING: GZFile::boxing_decls */
+/* sha: d6bcf076df63aa68840dd96e2e9ae4c7a0b1b8d7c26ccde6b4b53120a7a21918 */
+#if BIND_GZFile_TYPE
 mrb_value
 mruby_box_gzFile(mrb_state* mrb, gzFile *unboxed);
 
@@ -61,29 +61,16 @@ mruby_unbox_gzFile(mrb_value boxed);
 #endif
 /* MRUBY_BINDING_END */
 
-/* MRUBY_BINDING: GzFileS::boxing_decls */
-/* sha: 0be37b5071868519d2ecc86360dd095ef32ab18426593e38413af0c705e0305a */
-#if BIND_GzFileS_TYPE
-mrb_value
-mruby_box_gzFile_s(mrb_state* mrb, gzFile unboxed);
+/* MRUBY_BINDING: GZFileS::boxing_decls */
+/* sha: 29c4bbba1a6b8a1f5015487ccad849a85d3b6ece91ba7a7e5f7ef047e274a751 */
 
-mrb_value
-mruby_giftwrap_gzFile_s(mrb_state* mrb, gzFile unboxed);
+/*** DELETED ***/
 
-void
-mruby_set_gzFile_s_data_ptr(mrb_value obj, gzFile unboxed);
-
-void
-mruby_gift_gzFile_s_data_ptr(mrb_value obj, gzFile unboxed);
-
-gzFile
-mruby_unbox_gzFile_s(mrb_value boxed);
-#endif
 /* MRUBY_BINDING_END */
 
-/* MRUBY_BINDING: GzHeader::boxing_decls */
-/* sha: db4abe5b95cbb92d4ee0a3b36ac61adad32757d63047d73968c81892e773334c */
-#if BIND_GzHeader_TYPE
+/* MRUBY_BINDING: GZHeader::boxing_decls */
+/* sha: b933abe15adda3429bdc46a23d4b0a24e4adf3047796781158138d2a17ea0100 */
+#if BIND_GZHeader_TYPE
 mrb_value
 mruby_box_gz_header(mrb_state* mrb, gz_header *unboxed);
 

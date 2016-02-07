@@ -39,9 +39,9 @@
 
 /* MRUBY_BINDING_END */
 
-/* MRUBY_BINDING: GzFile_boxing */
-/* sha: 8dc6ecfb84a60bab981fa393a6ad9ac356c01ad686b1d888f16072d9b8f54b37 */
-#if BIND_GzFile_TYPE
+/* MRUBY_BINDING: GZFile_boxing */
+/* sha: d3e07fa7bacdee04e998933d60e9dca1889f665eeeb2ff913db2ad205b00b1e0 */
+#if BIND_GZFile_TYPE
 /*
  * Boxing implementation for gzFile
  */
@@ -66,7 +66,7 @@ mruby_box_gzFile(mrb_state* mrb, gzFile *unboxed) {
   mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
   box->belongs_to_ruby = FALSE;
   box->obj = unboxed;
-  return mrb_obj_value(Data_Wrap_Struct(mrb, GzFile_class(mrb), &gzFile_data_type, box));
+  return mrb_obj_value(Data_Wrap_Struct(mrb, GZFile_class(mrb), &gzFile_data_type, box));
 }
 
 mrb_value
@@ -74,7 +74,7 @@ mruby_giftwrap_gzFile(mrb_state* mrb, gzFile *unboxed) {
    mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
    box->belongs_to_ruby = TRUE;
    box->obj = unboxed;
-   return mrb_obj_value(Data_Wrap_Struct(mrb, GzFile_class(mrb), &gzFile_data_type, box));
+   return mrb_obj_value(Data_Wrap_Struct(mrb, GZFile_class(mrb), &gzFile_data_type, box));
 }
 
 void
@@ -100,9 +100,9 @@ mruby_unbox_gzFile(mrb_value boxed) {
 #endif
 /* MRUBY_BINDING_END */
 
-/* MRUBY_BINDING: GzHeader_boxing */
-/* sha: 49129dd3ba6878140345155873a4177f941bf59df999d0540f5ba25a2131756c */
-#if BIND_GzHeader_TYPE
+/* MRUBY_BINDING: GZHeader_boxing */
+/* sha: b711ad56d02e73e95ddc544ffe7b0bece4037c1bf91e3eee8146b11c9d17cda5 */
+#if BIND_GZHeader_TYPE
 /*
  * Boxing implementation for gz_header
  */
@@ -127,7 +127,7 @@ mruby_box_gz_header(mrb_state* mrb, gz_header *unboxed) {
   mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
   box->belongs_to_ruby = FALSE;
   box->obj = unboxed;
-  return mrb_obj_value(Data_Wrap_Struct(mrb, GzHeader_class(mrb), &gz_header_data_type, box));
+  return mrb_obj_value(Data_Wrap_Struct(mrb, GZHeader_class(mrb), &gz_header_data_type, box));
 }
 
 mrb_value
@@ -135,7 +135,7 @@ mruby_giftwrap_gz_header(mrb_state* mrb, gz_header *unboxed) {
    mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
    box->belongs_to_ruby = TRUE;
    box->obj = unboxed;
-   return mrb_obj_value(Data_Wrap_Struct(mrb, GzHeader_class(mrb), &gz_header_data_type, box));
+   return mrb_obj_value(Data_Wrap_Struct(mrb, GZHeader_class(mrb), &gz_header_data_type, box));
 }
 
 void
@@ -161,65 +161,11 @@ mruby_unbox_gz_header(mrb_value boxed) {
 #endif
 /* MRUBY_BINDING_END */
 
-/* MRUBY_BINDING: GzFileS_boxing */
-/* sha: f3d872a45168a6e96c15d2dc2cd1490a92c5c3892a42d42412246831f485782a */
-#if BIND_GzFileS_TYPE
-/*
- * Boxing implementation for gzFile
- */
+/* MRUBY_BINDING: GZFileS_boxing */
+/* sha: fe8e3aa32282428439cb9db793a3d3b384e7d13ec788b7f2d20a978c1179f0da */
 
-static void free_gzFile_s(mrb_state* mrb, void* ptr) {
-  mruby_to_native_ref* box = (mruby_to_native_ref*)ptr;
-  if (box->belongs_to_ruby) {
-    if (box->obj != NULL) {
-      free(box->obj);
-      box->obj = NULL;
-    }
-  }
-  free(box);
-}
+/*** DELETED. USE GZFile_boxing FUNCTIONS. ***/
 
-static const mrb_data_type gzFile_s_data_type = {
-   "gzFile", free_gzFile_s
-};
-
-mrb_value
-mruby_box_gzFile_s(mrb_state* mrb, gzFile unboxed) {
-  mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
-  box->belongs_to_ruby = FALSE;
-  box->obj = unboxed;
-  return mrb_obj_value(Data_Wrap_Struct(mrb, GzFileS_class(mrb), &gzFile_s_data_type, box));
-}
-
-mrb_value
-mruby_giftwrap_gzFile_s(mrb_state* mrb, gzFile unboxed) {
-   mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
-   box->belongs_to_ruby = TRUE;
-   box->obj = unboxed;
-   return mrb_obj_value(Data_Wrap_Struct(mrb, GzFileS_class(mrb), &gzFile_s_data_type, box));
-}
-
-void
-mruby_set_gzFile_s_data_ptr(mrb_value obj, gzFile unboxed) {
-  mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
-  box->belongs_to_ruby = FALSE;
-  box->obj = unboxed;
-  mrb_data_init(obj, box, &gzFile_s_data_type);
-}
-
-void
-mruby_gift_gzFile_s_data_ptr(mrb_value obj, gzFile unboxed) {
-  mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
-  box->belongs_to_ruby = TRUE;
-  box->obj = unboxed;
-  mrb_data_init(obj, box, &gzFile_s_data_type);
-}
-
-gzFile
-mruby_unbox_gzFile_s(mrb_value boxed) {
-  return (gzFile)((mruby_to_native_ref *)DATA_PTR(boxed))->obj;
-}
-#endif
 /* MRUBY_BINDING_END */
 
 /* MRUBY_BINDING: InternalState_boxing */
