@@ -1501,7 +1501,7 @@ ZEXTERN z_off_t ZEXPORT gzoffset (gzFile * file);
    gzip file reading and decompression, which may not be desired.)
 */
 
-				  ZEXTERN int ZEXPORT    gzclose (gzFile * file);
+  ZEXTERN int ZEXPORT    gzclose (gzFile * file);
 /*
      Flushes all pending output if necessary, closes the compressed file and
    deallocates the (de)compression state.  Note that once file is closed, you
@@ -1514,8 +1514,8 @@ ZEXTERN z_off_t ZEXPORT gzoffset (gzFile * file);
    last read ended in the middle of a gzip stream, or Z_OK on success.
 */
 
-				  ZEXTERN int ZEXPORT gzclose_r (gzFile * file);
-				  ZEXTERN int ZEXPORT gzclose_w (gzFile * file);
+  ZEXTERN int ZEXPORT gzclose_r (gzFile * file);
+  ZEXTERN int ZEXPORT gzclose_w (gzFile * file);
 /*
      Same as gzclose(), but gzclose_r() is only for use when reading, and
    gzclose_w() is only for use when writing or appending.  The advantage to
@@ -1526,7 +1526,7 @@ ZEXTERN z_off_t ZEXPORT gzoffset (gzFile * file);
    zlib library.
 */
 
-				  ZEXTERN const char * ZEXPORT gzerror (gzFile * file, int *errnum);
+  ZEXTERN const char * ZEXPORT gzerror (gzFile * file, int *errnum);
 /*
      Returns the error message for the last error which occurred on the given
    compressed file.  errnum is set to zlib error number.  If an error occurred
@@ -1542,7 +1542,7 @@ ZEXTERN z_off_t ZEXPORT gzoffset (gzFile * file);
    functions above that do not distinguish those cases in their return values.
 */
 
-				  ZEXTERN void ZEXPORT gzclearerr (gzFile * file);
+  ZEXTERN void ZEXPORT gzclearerr (gzFile * file);
 /*
      Clears the error and end-of-file flags for file.  This is analogous to the
    clearerr() function in stdio.  This is useful for continuing to read a gzip

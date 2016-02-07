@@ -1,9 +1,10 @@
-#include <errno.h>
-#include <stdio.h>
 #include "mruby_ZLib.h"
 
 /* MRUBY_BINDING: header */
 /* sha: user_defined */
+#include <errno.h>
+#include <stdio.h>
+
 void
 raise_zlib_errno(mrb_state * mrb, int err) {
   switch (err) {
@@ -750,6 +751,11 @@ mrb_ZLib_gzgetc(mrb_state* mrb, mrb_value self) {
 
   /* Invocation */
   int native_return_value = gzgetc(native_file);
+  if (native_return_value == -1) {
+    int err = 0;
+    gzerror(native_file, &err);
+    raise_zlib_errno(mrb, err);
+  }
 
   /* Box the return value */
   mrb_value return_value = mrb_fixnum_value(native_return_value);
@@ -796,7 +802,9 @@ mrb_ZLib_gzgets(mrb_state* mrb, mrb_value self) {
   free(native_buf);
   
   if (native_return_value == NULL && !gzeof(native_file)) {
-    raise_zlib_errno(mrb, gzerror(native_file, &errno));
+    int err = 0;
+    gzerror(native_file, &err);
+    raise_zlib_errno(mrb, err);
   }
 
   return result;
@@ -828,7 +836,12 @@ mrb_ZLib_gzoffset(mrb_state* mrb, mrb_value self) {
 
   /* Invocation */
   long native_return_value = gzoffset(native_file);
-
+  if (native_return_value == -1) {
+    int err = 0;
+    gzerror(native_file, &err);
+    raise_zlib_errno(mrb, err);
+  }
+  
   /* Box the return value */
   mrb_value return_value = mrb_fixnum_value(native_return_value);
   
@@ -887,6 +900,11 @@ mrb_ZLib_gzputc(mrb_state* mrb, mrb_value self) {
 
   /* Invocation */
   int native_return_value = gzputc(native_file, native_c);
+  if (native_return_value == -1) {
+    int err = 0;
+    gzerror(native_file, &err);
+    raise_zlib_errno(mrb, err);
+  }
 
   /* Box the return value */
   mrb_value return_value = mrb_fixnum_value(native_return_value);
@@ -921,6 +939,11 @@ mrb_ZLib_gzputs(mrb_state* mrb, mrb_value self) {
 
   /* Invocation */
   int native_return_value = gzputs(native_file, native_s);
+  if (native_return_value == -1) {
+    int err = 0;
+    gzerror(native_file, &err);
+    raise_zlib_errno(mrb, err);
+  }
 
   /* Box the return value */
   mrb_value return_value = mrb_fixnum_value(native_return_value);
@@ -960,18 +983,26 @@ mrb_ZLib_gzread(mrb_state* mrb, mrb_value self) {
   int native_return_value = gzread(native_file, native_buf, native_len);
 
   /* Box the return value */
-  mrb_value return_value = mrb_ary_new(mrb);
-  mrb_ary_push(mrb, return_value, mrb_fixnum_value(native_return_value));
-  
+  mrb_value result = mrb_nil_value();
   if (native_return_value >= 0) {
-    mrb_ary_push(mrb, return_value, mrb_str_new(mrb, native_buf, native_return_value));
+    result = mrb_str_new(mrb, native_buf, native_return_value);
   } else {
-    mrb_ary_push(mrb, return_value, mrb_nil_value());
+    int err = 0;
+    gzerror(native_file, &err);
+    if (err == Z_OK) {
+      /* Not actually an error, just the end of one gzip stream
+       * Signifty this to the caller by returning nil instead of the empty string.
+       * (XXX: Something less subtle would be preferable)
+       */
+      gzclearerr(native_file);
+      result = mrb_nil_value(); /* redundant but explicit */
+    }
   }
   
   free(native_buf);
   
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return result;
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -1070,6 +1101,9 @@ mrb_ZLib_gzsetparams(mrb_state* mrb, mrb_value self) {
 
   /* Invocation */
   int native_return_value = gzsetparams(native_file, native_level, native_strategy);
+  if (native_return_value == Z_OK) {
+    raise_zlib_errno(mrb, native_return_value);
+  }
 
   /* Box the return value */
   mrb_value return_value = mrb_fixnum_value(native_return_value);
@@ -1137,6 +1171,11 @@ mrb_ZLib_gzungetc(mrb_state* mrb, mrb_value self) {
 
   /* Invocation */
   int native_return_value = gzungetc(native_c, native_file);
+  if (native_return_value == -1) {
+    int err = 0;
+    gzerror(native_file, &err);
+    raise_zlib_errno(mrb, err);
+  }
 
   /* Box the return value */
   mrb_value return_value = mrb_fixnum_value(native_return_value);
@@ -1149,7 +1188,7 @@ mrb_ZLib_gzungetc(mrb_state* mrb, mrb_value self) {
 /* MRUBY_BINDING: gzwrite */
 /* sha: 0ae199c978ab4c99466492126bbddb4a412f5b735d34d9c044bd0a8b28d85dd5 */
 #if BIND_gzwrite_FUNCTION
-#define gzwrite_REQUIRED_ARGC 3
+#define gzwrite_REQUIRED_ARGC 2
 #define gzwrite_OPTIONAL_ARGC 0
 /* int gzwrite(gzFile * file, voidpc buf, unsigned int len) */
 mrb_value
@@ -1172,6 +1211,11 @@ mrb_ZLib_gzwrite(mrb_state* mrb, mrb_value self) {
 
   /* Invocation */
   int native_return_value = gzwrite(native_file, native_buf, native_len);
+  if (native_return_value != 0) {
+    int err = 0;
+    gzerror(native_file, &err);
+    raise_zlib_errno(mrb, err);
+  }
 
   /* Box the return value */
   mrb_value return_value = mrb_fixnum_value(native_return_value);
