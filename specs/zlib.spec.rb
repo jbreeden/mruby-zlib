@@ -158,6 +158,11 @@ EOS
     end
   end
   
+  desc '`ZLib::inflateInit(stream)`' do
+    it 'Initalizes a stream to inflate data' do
+    end
+  end
+  
   desc '`ZLib.inflate(stream, str)`' do
     it 'Inflates `str`, possibly returning a chunk of the uncompressed output' do
       s = ZLib::ZStream.new

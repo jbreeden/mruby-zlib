@@ -60,8 +60,11 @@ These functions provide a streaming interface for zlib & gzip compression.
 - `ZLib.deflate(stream, flush)`
   + Deflates all of `stream.next_in`, possibly returning a chunk of the compressed output
 
+- `ZLib::inflateInit(stream)`
+  + Initalizes a stream to inflate data
+
 - `ZLib.inflate(stream, str)`
   + Inflates `str`, possibly returning a chunk of the uncompressed output
 
 
-SUCCESS [0 failed, 0 skipped, 20 total]
+SUCCESS [0 failed, 0 skipped, 21 total]
