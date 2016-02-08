@@ -49,5 +49,19 @@ These functions provide IO for GZip files similar to C's stdlib `fopen`, `fread`
   + Closes the given GZFile `file`
   + After a file is closed, write & flush still appear to work (no exceptions), but have no affect
 
+### `inflate` & `deflate`
 
-SUCCESS [0 failed, 0 skipped, 16 total]
+These functions provide a streaming interface for zlib & gzip compression.
+
+- `ZLib::deflateInit(stream, level = ZLib::Z_DEFAULT_COMPRESSION)`
+  + Initalizes a stream to deflate at the given `level`
+  + `level` defaults to 6 (ZLib::Z_DEFAULT_COMPRESSION)
+
+- `ZLib.deflate(stream, flush)`
+  + Deflates all of `stream.next_in`, possibly returning a chunk of the compressed output
+
+- `ZLib.inflate(stream, str)`
+  + Inflates `str`, possibly returning a chunk of the uncompressed output
+
+
+SUCCESS [0 failed, 0 skipped, 20 total]

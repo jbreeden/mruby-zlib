@@ -233,16 +233,16 @@ mrb_ZLib_crc32_combine(mrb_state* mrb, mrb_value self) {
 /* MRUBY_BINDING: deflate */
 /* sha: 32f8e74147ddee779d138f1cc444b650884ff21d54d4a72ac9f2524a093169e6 */
 #if BIND_deflate_FUNCTION
-#define deflate_REQUIRED_ARGC 2
-#define deflate_OPTIONAL_ARGC 0
+#define deflate_REQUIRED_ARGC 1
+#define deflate_OPTIONAL_ARGC 1
 /* int deflate(z_stream * strm, int flush) */
 mrb_value
 mrb_ZLib_deflate(mrb_state* mrb, mrb_value self) {
   mrb_value strm;
-  mrb_int native_flush;
+  mrb_int native_flush = Z_NO_FLUSH;
 
   /* Fetch the args */
-  mrb_get_args(mrb, "oi", &strm, &native_flush);
+  mrb_get_args(mrb, "o|i", &strm, &native_flush);
 
   /* Type checking */
   if (!mrb_obj_is_kind_of(mrb, strm, ZStream_class(mrb))) {
@@ -254,12 +254,45 @@ mrb_ZLib_deflate(mrb_state* mrb, mrb_value self) {
   z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
 
   /* Invocation */
-  int native_return_value = deflate(native_strm, native_flush);
-
-  /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
   
-  return return_value;
+  /** Get buffer size */
+  mrb_int buffer_size = ((mruby_z_stream*)native_strm)->buffer_size;
+  
+  /** Setup next_in */
+  mrb_value next_in = mrb_iv_get(mrb, strm, mrb_intern_cstr(mrb, "@next_in"));
+  
+  /*** We're going to pump through the entire input, so go ahead and set next_in to nil */
+  mrb_iv_set(mrb, strm, mrb_intern_cstr(mrb, "@next_in"), mrb_nil_value());
+  
+  if (mrb_nil_p(next_in)) {
+    native_strm->next_in = NULL;
+    native_strm->avail_in = 0;
+  } else {
+    mrb_value next_in_as_str = mrb_str_to_str(mrb, next_in);
+    native_strm->next_in = RSTRING_PTR(next_in_as_str);
+    native_strm->avail_in = RSTRING_LEN(next_in_as_str);
+  }
+    
+  /** Run until no more output is generated */
+  mrb_value result = mrb_str_new(mrb, "", 0);
+  int ready_out = buffer_size - native_strm->avail_out;
+  do {
+    char * buffer_start = ((mruby_z_stream *)native_strm)->buffer_start;
+    if (ready_out > 0) {
+      mrb_str_cat(mrb, result, buffer_start, ready_out);
+    }
+    native_strm->next_out = buffer_start;
+    native_strm->avail_out = buffer_size;
+    
+    int result = Z_OK;
+    result = deflate(native_strm, native_flush);
+    if (result != Z_OK && result != Z_BUF_ERROR) {
+      raise_zlib_errno(mrb, result);
+    }
+    ready_out = buffer_size - native_strm->avail_out;
+  } while (ready_out > 0 || native_strm->avail_in > 0);
+  
+  return result;
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -1692,10 +1725,10 @@ mrb_ZLib_gzwrite(mrb_state* mrb, mrb_value self) {
 mrb_value
 mrb_ZLib_inflate(mrb_state* mrb, mrb_value self) {
   mrb_value strm;
-  mrb_int native_flush;
+  mrb_int native_flush = Z_NO_FLUSH;
 
   /* Fetch the args */
-  mrb_get_args(mrb, "oi", &strm, &native_flush);
+  mrb_get_args(mrb, "o|i", &strm, &native_flush);
 
   /* Type checking */
   if (!mrb_obj_is_kind_of(mrb, strm, ZStream_class(mrb))) {
@@ -1707,12 +1740,45 @@ mrb_ZLib_inflate(mrb_state* mrb, mrb_value self) {
   z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
 
   /* Invocation */
-  int native_return_value = inflate(native_strm, native_flush);
-
-  /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
   
-  return return_value;
+  /** Get buffer size */
+  mrb_int buffer_size = ((mruby_z_stream*)native_strm)->buffer_size;
+  
+  /** Setup next_in */
+  mrb_value next_in = mrb_iv_get(mrb, strm, mrb_intern_cstr(mrb, "@next_in"));
+  
+  /*** We're going to pump through the entire input, so go ahead and set next_in to nil */
+  mrb_iv_set(mrb, strm, mrb_intern_cstr(mrb, "@next_in"), mrb_nil_value());
+  
+  if (mrb_nil_p(next_in)) {
+    native_strm->next_in = NULL;
+    native_strm->avail_in = 0;
+  } else {
+    mrb_value next_in_as_str = mrb_str_to_str(mrb, next_in);
+    native_strm->next_in = RSTRING_PTR(next_in_as_str);
+    native_strm->avail_in = RSTRING_LEN(next_in_as_str);
+  }
+    
+  /** Run until no more output is generated and no more input */
+  mrb_value result = mrb_str_new(mrb, "", 0);
+  int ready_out = buffer_size - native_strm->avail_out;
+  do {
+    char * buffer_start = ((mruby_z_stream *)native_strm)->buffer_start;
+    if (ready_out > 0) {
+      mrb_str_cat(mrb, result, buffer_start, ready_out);
+    }
+    native_strm->next_out = buffer_start;
+    native_strm->avail_out = buffer_size;
+    
+    int result = Z_OK;
+    result = inflate(native_strm, native_flush);
+    if (result != Z_OK && result != Z_BUF_ERROR) {
+      raise_zlib_errno(mrb, result);
+    }
+    ready_out = buffer_size - native_strm->avail_out;
+  } while (ready_out > 0 || native_strm->avail_in > 0);
+  
+  return result;
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2579,7 +2645,7 @@ void mrb_mruby_zlib_gem_init(mrb_state* mrb) {
 /* sha: user_defined */
   mrb_define_class_under(mrb, ZLib_module, "ZError", mrb->eStandardError_class);
   mrb_define_class_under(mrb, ZLib_module, "ZSystemCallError", ZError_class(mrb));
-  mrb_define_class_under(mrb, ZLib_module, "ZStreamError_class", ZError_class(mrb));
+  mrb_define_class_under(mrb, ZLib_module, "ZStreamError", ZError_class(mrb));
   mrb_define_class_under(mrb, ZLib_module, "ZBufferError", ZError_class(mrb));
   mrb_define_class_under(mrb, ZLib_module, "ZDataError", ZError_class(mrb));
   mrb_define_class_under(mrb, ZLib_module, "ZMemoryError", ZError_class(mrb));

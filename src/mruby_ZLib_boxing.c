@@ -240,10 +240,9 @@ static void free_z_stream(mrb_state* mrb, void* ptr) {
   mruby_to_native_ref* box = (mruby_to_native_ref*)ptr;
   if (box->belongs_to_ruby) {
     if (box->obj != NULL) {
-      z_stream * as_stream = (z_stream *)box->obj;
-      if (as_stream->avail_in) free(as_stream->avail_in);
-      if (as_stream->avail_out) free(as_stream->avail_out);
-      free(as_stream);
+      mruby_z_stream * as_stream = (mruby_z_stream *)box->obj;
+      free(as_stream->buffer_start);
+      free(box->obj);
       box->obj = NULL;
     }
   }

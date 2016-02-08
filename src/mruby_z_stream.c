@@ -9,7 +9,7 @@
 
 /* MRUBY_BINDING: header */
 /* sha: user_defined */
-#define BUFFER_SIZE (64 * 1024)
+
 /* MRUBY_BINDING_END */
 
 /* MRUBY_BINDING: ZStream::initialize */
@@ -17,10 +17,17 @@
 #if BIND_ZStream_INITIALIZE
 mrb_value
 mrb_ZLib_ZStream_initialize(mrb_state* mrb, mrb_value self) {
-  z_stream* native_object = (z_stream*)calloc(1, sizeof(z_stream));
-  mruby_gift_z_stream_data_ptr(self, native_object);
-  native_object->avail_out = BUFFER_SIZE;
-  native_object->next_out = BUFFER_SIZE;
+  mrb_int buffer_size = BUFFER_SIZE;
+  
+  mrb_get_args(mrb, "|i", &buffer_size);
+  
+  mruby_z_stream * native_object = (mruby_z_stream*)calloc(1, sizeof(mruby_z_stream));
+  native_object->stream.next_out = (char *)calloc(buffer_size, sizeof(char));
+  native_object->stream.avail_out = buffer_size;
+  native_object->buffer_size = buffer_size;
+  native_object->buffer_start = native_object->stream.next_out;
+  
+  mruby_gift_z_stream_data_ptr(self, (z_stream*)native_object);
   return self;
 }
 #endif
@@ -35,13 +42,7 @@ mrb_ZLib_ZStream_initialize(mrb_state* mrb, mrb_value self) {
 #if BIND_ZStream_next_in_FIELD_READER
 mrb_value
 mrb_ZLib_ZStream_get_next_in(mrb_state* mrb, mrb_value self) {
-  z_stream * native_self = mruby_unbox_z_stream(self);
-
-  const Bytef * native_next_in = native_self->next_in;
-
-  mrb_value next_in = native_next_in == NULL ? mrb_nil_value() : mrb_str_new_cstr(mrb, native_next_in);
-
-  return next_in;
+  return mrb_iv_get(mrb, self, mrb_intern_cstr(mrb, "@next_in"));
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -52,15 +53,12 @@ mrb_ZLib_ZStream_get_next_in(mrb_state* mrb, mrb_value self) {
 mrb_value
 mrb_ZLib_ZStream_set_next_in(mrb_state* mrb, mrb_value self) {
   z_stream * native_self = mruby_unbox_z_stream(self);
-  char * native_next_in = NULL;
+  mrb_value next_in = mrb_nil_value();
 
-  mrb_get_args(mrb, "z", &native_next_in);
-
-  native_self->next_in = native_next_in;
+  mrb_get_args(mrb, "S!", &next_in);
+  mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, "@next_in"), next_in);
   
-  mrb_value value_as_mrb_value;
-  mrb_get_args(mrb, "o", &value_as_mrb_value);
-  return value_as_mrb_value;
+  return next_in;
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -588,7 +586,7 @@ void mrb_ZLib_ZStream_init(mrb_state* mrb) {
 /* MRUBY_BINDING: ZStream::class_method_definitions */
 /* sha: 9cb6a2670fc2849041d6a4f4861085733500639f7032a0fe5fdf5f187aa621a9 */
 #if BIND_ZStream_INITIALIZE
-  mrb_define_method(mrb, ZStream_class, "initialize", mrb_ZLib_ZStream_initialize, MRB_ARGS_NONE());
+  mrb_define_method(mrb, ZStream_class, "initialize", mrb_ZLib_ZStream_initialize, MRB_ARGS_ARG(0, 1));
 #endif
 /* MRUBY_BINDING_END */
 
@@ -608,84 +606,84 @@ void mrb_ZLib_ZStream_init(mrb_state* mrb) {
 #if BIND_ZStream_next_in_FIELD_WRITER
   mrb_define_method(mrb, ZStream_class, "next_in=", mrb_ZLib_ZStream_set_next_in, MRB_ARGS_ARG(1, 0));
 #endif
-#if BIND_ZStream_avail_in_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "avail_in", mrb_ZLib_ZStream_get_avail_in, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_avail_in_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "avail_in=", mrb_ZLib_ZStream_set_avail_in, MRB_ARGS_ARG(1, 0));
-#endif
-#if BIND_ZStream_total_in_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "total_in", mrb_ZLib_ZStream_get_total_in, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_total_in_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "total_in=", mrb_ZLib_ZStream_set_total_in, MRB_ARGS_ARG(1, 0));
-#endif
-#if BIND_ZStream_next_out_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "next_out", mrb_ZLib_ZStream_get_next_out, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_next_out_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "next_out=", mrb_ZLib_ZStream_set_next_out, MRB_ARGS_ARG(1, 0));
-#endif
-#if BIND_ZStream_avail_out_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "avail_out", mrb_ZLib_ZStream_get_avail_out, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_avail_out_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "avail_out=", mrb_ZLib_ZStream_set_avail_out, MRB_ARGS_ARG(1, 0));
-#endif
-#if BIND_ZStream_total_out_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "total_out", mrb_ZLib_ZStream_get_total_out, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_total_out_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "total_out=", mrb_ZLib_ZStream_set_total_out, MRB_ARGS_ARG(1, 0));
-#endif
-#if BIND_ZStream_msg_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "msg", mrb_ZLib_ZStream_get_msg, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_msg_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "msg=", mrb_ZLib_ZStream_set_msg, MRB_ARGS_ARG(1, 0));
-#endif
-#if BIND_ZStream_state_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "state", mrb_ZLib_ZStream_get_state, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_state_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "state=", mrb_ZLib_ZStream_set_state, MRB_ARGS_ARG(1, 0));
-#endif
-#if BIND_ZStream_zalloc_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "zalloc", mrb_ZLib_ZStream_get_zalloc, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_zalloc_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "zalloc=", mrb_ZLib_ZStream_set_zalloc, MRB_ARGS_ARG(1, 0));
-#endif
-#if BIND_ZStream_zfree_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "zfree", mrb_ZLib_ZStream_get_zfree, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_zfree_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "zfree=", mrb_ZLib_ZStream_set_zfree, MRB_ARGS_ARG(1, 0));
-#endif
-#if BIND_ZStream_opaque_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "opaque", mrb_ZLib_ZStream_get_opaque, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_opaque_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "opaque=", mrb_ZLib_ZStream_set_opaque, MRB_ARGS_ARG(1, 0));
-#endif
-#if BIND_ZStream_data_type_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "data_type", mrb_ZLib_ZStream_get_data_type, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_data_type_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "data_type=", mrb_ZLib_ZStream_set_data_type, MRB_ARGS_ARG(1, 0));
-#endif
-#if BIND_ZStream_adler_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "adler", mrb_ZLib_ZStream_get_adler, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_adler_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "adler=", mrb_ZLib_ZStream_set_adler, MRB_ARGS_ARG(1, 0));
-#endif
-#if BIND_ZStream_reserved_FIELD_READER
-  mrb_define_method(mrb, ZStream_class, "reserved", mrb_ZLib_ZStream_get_reserved, MRB_ARGS_ARG(0, 0));
-#endif
-#if BIND_ZStream_reserved_FIELD_WRITER
-  mrb_define_method(mrb, ZStream_class, "reserved=", mrb_ZLib_ZStream_set_reserved, MRB_ARGS_ARG(1, 0));
-#endif
+// #if BIND_ZStream_avail_in_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "avail_in", mrb_ZLib_ZStream_get_avail_in, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_avail_in_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "avail_in=", mrb_ZLib_ZStream_set_avail_in, MRB_ARGS_ARG(1, 0));
+// #endif
+// #if BIND_ZStream_total_in_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "total_in", mrb_ZLib_ZStream_get_total_in, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_total_in_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "total_in=", mrb_ZLib_ZStream_set_total_in, MRB_ARGS_ARG(1, 0));
+// #endif
+// #if BIND_ZStream_next_out_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "next_out", mrb_ZLib_ZStream_get_next_out, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_next_out_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "next_out=", mrb_ZLib_ZStream_set_next_out, MRB_ARGS_ARG(1, 0));
+// #endif
+// #if BIND_ZStream_avail_out_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "avail_out", mrb_ZLib_ZStream_get_avail_out, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_avail_out_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "avail_out=", mrb_ZLib_ZStream_set_avail_out, MRB_ARGS_ARG(1, 0));
+// #endif
+// #if BIND_ZStream_total_out_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "total_out", mrb_ZLib_ZStream_get_total_out, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_total_out_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "total_out=", mrb_ZLib_ZStream_set_total_out, MRB_ARGS_ARG(1, 0));
+// #endif
+// #if BIND_ZStream_msg_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "msg", mrb_ZLib_ZStream_get_msg, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_msg_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "msg=", mrb_ZLib_ZStream_set_msg, MRB_ARGS_ARG(1, 0));
+// #endif
+// #if BIND_ZStream_state_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "state", mrb_ZLib_ZStream_get_state, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_state_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "state=", mrb_ZLib_ZStream_set_state, MRB_ARGS_ARG(1, 0));
+// #endif
+// #if BIND_ZStream_zalloc_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "zalloc", mrb_ZLib_ZStream_get_zalloc, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_zalloc_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "zalloc=", mrb_ZLib_ZStream_set_zalloc, MRB_ARGS_ARG(1, 0));
+// #endif
+// #if BIND_ZStream_zfree_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "zfree", mrb_ZLib_ZStream_get_zfree, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_zfree_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "zfree=", mrb_ZLib_ZStream_set_zfree, MRB_ARGS_ARG(1, 0));
+// #endif
+// #if BIND_ZStream_opaque_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "opaque", mrb_ZLib_ZStream_get_opaque, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_opaque_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "opaque=", mrb_ZLib_ZStream_set_opaque, MRB_ARGS_ARG(1, 0));
+// #endif
+// #if BIND_ZStream_data_type_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "data_type", mrb_ZLib_ZStream_get_data_type, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_data_type_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "data_type=", mrb_ZLib_ZStream_set_data_type, MRB_ARGS_ARG(1, 0));
+// #endif
+// #if BIND_ZStream_adler_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "adler", mrb_ZLib_ZStream_get_adler, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_adler_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "adler=", mrb_ZLib_ZStream_set_adler, MRB_ARGS_ARG(1, 0));
+// #endif
+// #if BIND_ZStream_reserved_FIELD_READER
+//   mrb_define_method(mrb, ZStream_class, "reserved", mrb_ZLib_ZStream_get_reserved, MRB_ARGS_ARG(0, 0));
+// #endif
+// #if BIND_ZStream_reserved_FIELD_WRITER
+//   mrb_define_method(mrb, ZStream_class, "reserved=", mrb_ZLib_ZStream_set_reserved, MRB_ARGS_ARG(1, 0));
+// #endif
 /* MRUBY_BINDING_END */
 
 

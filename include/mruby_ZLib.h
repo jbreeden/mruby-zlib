@@ -17,7 +17,6 @@
 
 /* MRUBY_BINDING: pre_includes */
 /* sha: user_defined */
-
 /* MRUBY_BINDING_END */
 
 /* MRUBY_BINDING: includes */
@@ -43,6 +42,14 @@
 /* sha: user_defined */
 #undef BIND_GZFile_INITIALIZE
 #define BIND_GZFile_INITIALIZE TRUE
+
+#define BUFFER_SIZE (64 * 1024)
+
+typedef struct {
+  z_stream stream;
+  int buffer_size;
+  char * buffer_start;
+} mruby_z_stream;
 /* MRUBY_BINDING_END */
 
 /*

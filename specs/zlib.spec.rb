@@ -128,4 +128,52 @@ EOS
       File.delete('gzwrite.gz')
     end
   end
+  
+blurb <<-EOS
+### `inflate` & `deflate`
+
+These functions provide a streaming interface for zlib & gzip compression.
+EOS
+
+  desc '`ZLib::deflateInit(stream, level = ZLib::Z_DEFAULT_COMPRESSION)`' do
+    it 'Initalizes a stream to deflate at the given `level`' do
+    end
+  
+    it '`level` defaults to 6 (ZLib::Z_DEFAULT_COMPRESSION)' do
+    end
+  end
+  
+  desc '`ZLib.deflate(stream, flush)`' do
+    it 'Deflates all of `stream.next_in`, possibly returning a chunk of the compressed output' do
+      s = ZLib::ZStream.new
+      ZLib.deflateInit(s)
+      s.next_in = $src
+      out = ZLib.deflate(s, ZLib::Z_FINISH)
+      
+      t = ZLib::ZStream.new
+      ZLib.inflateInit(t)
+      t.next_in = out
+      inflated = ZLib.inflate(t, ZLib::Z_FINISH)
+      assert inflated == $src
+    end
+  end
+  
+  desc '`ZLib.inflate(stream, str)`' do
+    it 'Inflates `str`, possibly returning a chunk of the uncompressed output' do
+      s = ZLib::ZStream.new
+      ZLib.deflateInit(s)
+      out = ''
+      (1..9).each do |i|
+        s.next_in = "test#{i}"
+        out << ZLib.deflate(s)
+      end
+      out << ZLib.deflate(s, ZLib::Z_FINISH)
+      
+      t = ZLib::ZStream.new
+      ZLib.inflateInit(t)
+      t.next_in = out
+      inflated = ZLib.inflate(t, ZLib::Z_FINISH)
+      assert inflated == ("test1".."test9").to_a.join('')
+    end
+  end
 end
