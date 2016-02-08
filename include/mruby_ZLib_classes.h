@@ -38,6 +38,8 @@
 
 #define BIND_InternalState_TYPE TRUE
 #define BIND_InternalState_INITIALIZE TRUE
+#define BIND_InternalState_dummy_FIELD_READER TRUE
+#define BIND_InternalState_dummy_FIELD_WRITER TRUE
 
 #define BIND_ZStream_TYPE TRUE
 #define BIND_ZStream_INITIALIZE TRUE

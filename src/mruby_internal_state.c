@@ -1,6 +1,6 @@
 /*
  * struct internal_state
- * Defined in file zlib.h @ line 83
+ * Defined in file zlib.h @ line 90
  */
 
 #include "mruby_ZLib.h"
@@ -23,6 +23,45 @@ mrb_ZLib_InternalState_initialize(mrb_state* mrb, mrb_value self) {
   mruby_gift_internal_state_data_ptr(self, native_object);
   return self;
 */
+}
+#endif
+/* MRUBY_BINDING_END */
+
+/*
+ * Fields
+ */
+
+/* MRUBY_BINDING: InternalState::dummy_reader */
+/* sha: 93e9c8af8038dfe9628173cdef5215ebf210db7c89bb6f221a8426897875bb52 */
+#if BIND_InternalState_dummy_FIELD_READER
+mrb_value
+mrb_ZLib_InternalState_get_dummy(mrb_state* mrb, mrb_value self) {
+  struct internal_state * native_self = mruby_unbox_internal_state(self);
+
+  int native_dummy = native_self->dummy;
+
+  mrb_value dummy = mrb_fixnum_value(native_dummy);
+
+  return dummy;
+}
+#endif
+/* MRUBY_BINDING_END */
+
+/* MRUBY_BINDING: InternalState::dummy_writer */
+/* sha: 012c3f72951529ff6f02ef7897ec5ddbe3004c398f732e80ee345821096e5b88 */
+#if BIND_InternalState_dummy_FIELD_WRITER
+mrb_value
+mrb_ZLib_InternalState_set_dummy(mrb_state* mrb, mrb_value self) {
+  struct internal_state * native_self = mruby_unbox_internal_state(self);
+  mrb_int native_dummy;
+
+  mrb_get_args(mrb, "i", &native_dummy);
+
+  native_self->dummy = native_dummy;
+  
+  mrb_value value_as_mrb_value;
+  mrb_get_args(mrb, "o", &value_as_mrb_value);
+  return value_as_mrb_value;
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -56,6 +95,23 @@ void mrb_ZLib_InternalState_init(mrb_state* mrb) {
 #endif
 /* MRUBY_BINDING_END */
 
+/* MRUBY_BINDING: InternalState::pre_attr_definitions */
+/* sha: user_defined */
+
+/* MRUBY_BINDING_END */
+
+/* MRUBY_BINDING: InternalState::attr_definitions */
+/* sha: e2d4653628dff092721fa41cff6535fa0c0112e23f3cb9e4e8ec76fe7bfced9e */
+  /*
+   * Fields
+   */
+#if BIND_InternalState_dummy_FIELD_READER
+  mrb_define_method(mrb, InternalState_class, "dummy", mrb_ZLib_InternalState_get_dummy, MRB_ARGS_ARG(0, 0));
+#endif
+#if BIND_InternalState_dummy_FIELD_WRITER
+  mrb_define_method(mrb, InternalState_class, "dummy=", mrb_ZLib_InternalState_set_dummy, MRB_ARGS_ARG(1, 0));
+#endif
+/* MRUBY_BINDING_END */
 
 
 /* MRUBY_BINDING: InternalState::post_class_definition */

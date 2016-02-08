@@ -1,3 +1,10 @@
+/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * EDITED TO ALLOW MRUBY_BINDINGS TO DISCERN TYPES MORE EASILY.
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * THIS IS NOT THE HEADER AS BUNDLED WITH THE ZLIB LIBRARY.
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ */
+
 /* zlib.h -- interface of the 'zlib' general purpose compression library
   version 1.2.8, April 28th, 2013
 
@@ -1480,7 +1487,7 @@ ZEXTERN z_off_t ZEXPORT gzoffset (gzFile * file);
    has grown since the previous end of file was detected.
 */
 
-  ZEXTERN int ZEXPORT gzdirect OF((gzFile * file);
+  ZEXTERN int ZEXPORT gzdirect (gzFile * file);
 /*
      Returns true (1) if file is being copied directly while reading, or false
    (0) if file is a gzip stream being decompressed.
@@ -1663,7 +1670,7 @@ struct gzFile_s {
     unsigned char *next;
     z_off64_t pos;
 };
-  ZEXTERN int ZEXPORT gzgetc_ OF((gzFile * file);  /* backward compatibility */
+  ZEXTERN int ZEXPORT gzgetc_ (gzFile * file);  /* backward compatibility */
 #ifdef Z_PREFIX_SET
 #  undef z_gzgetc
 #  define z_gzgetc(g) \

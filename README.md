@@ -8,15 +8,25 @@ Usage
 -----
 
 
+### Compress & Uncompress
+
+`compress` & `uncompress` provide a simple API for bulk compression. `compress`
+produces a deflate stream wrapped in a zlib header, and `uncompress` reverses
+that action.
+
 - `ZLib.compress(src)`
   + Compresses `src` with default settings & returns the compressed result.
-  + [SKIPPED] Returns a deflate stream wrapped in a zlib header/footer
+  + Returns a deflate stream wrapped in a zlib header/footer
 
 - `ZLib.uncompress(max_size, src)`
   + Uncompresses the src string (i.e. reverses `ZLib.compress`)
   + Raises a `ZLib::ZDataError` if src is not in the zlib format
   + Raises a `ZLib::ZBufferError` if `max_size` is not >= the size of the uncompressed data
   + Raises a `ZLib::ZDataError` if the input string is incomplete
+
+### GZFile APIs
+
+These functions provide IO for GZip files similar to C's stdlib `fopen`, `fread`, `fwrite`, etc.
 
 - `ZLib.gzopen(filename, mode)`
   + Returns a `ZLib::GZFile` based on the given `filename` & `mode` string
@@ -29,10 +39,15 @@ Usage
 - `ZLib::gzread(file, size)`
   + Reads up to `size` uncompressed bytes from the compressed GZFile `file`
 
-- ZLib.gzflush(file, flush)
+- `ZLib.gzflush(file, flush)`
   + Flushes the given file according to the `flush` argument
-  + `flush` should be one of `ZLib::Z_NO_FLUSH`, `ZLib::Z_PARTIAL_FLUSH`, `ZLib::Z_SYNC_FLUSH`, `ZLib::Z_FULL_FLUSH`, or `ZLib::Z_FINISH`
+  + `flush` should be one of `ZLib::Z_NO_FLUSH`, `ZLib::Z_PARTIAL_FLUSH`,
+    `ZLib::Z_SYNC_FLUSH`, `ZLib::Z_FULL_FLUSH`, or `ZLib::Z_FINISH`
   + Should be called on `GZFile`s when finished, to ensure the gz file has the proper footer
 
+- `ZLib.gzclose(file)`
+  + Closes the given GZFile `file`
+  + After a file is closed, write & flush still appear to work (no exceptions), but have no affect
 
-SUCCESS [0 failed, 1 skipped, 14 total]
+
+SUCCESS [0 failed, 0 skipped, 16 total]

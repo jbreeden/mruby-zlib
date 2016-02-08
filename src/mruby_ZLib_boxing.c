@@ -50,7 +50,7 @@ static void free_gzFile(mrb_state* mrb, void* ptr) {
   mruby_to_native_ref* box = (mruby_to_native_ref*)ptr;
   if (box->belongs_to_ruby) {
     if (box->obj != NULL) {
-      free(box->obj);
+      gzclose((gzFile *)box->obj);
       box->obj = NULL;
     }
   }
@@ -240,7 +240,10 @@ static void free_z_stream(mrb_state* mrb, void* ptr) {
   mruby_to_native_ref* box = (mruby_to_native_ref*)ptr;
   if (box->belongs_to_ruby) {
     if (box->obj != NULL) {
-      free(box->obj);
+      z_stream * as_stream = (z_stream *)box->obj;
+      if (as_stream->avail_in) free(as_stream->avail_in);
+      if (as_stream->avail_out) free(as_stream->avail_out);
+      free(as_stream);
       box->obj = NULL;
     }
   }

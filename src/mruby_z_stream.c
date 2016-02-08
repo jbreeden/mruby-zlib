@@ -1,6 +1,6 @@
 /*
  * z_stream
- * Defined in file zlib.h @ line 85
+ * Defined in file zlib.h @ line 92
  */
 
 #include "mruby_ZLib.h"
@@ -9,7 +9,7 @@
 
 /* MRUBY_BINDING: header */
 /* sha: user_defined */
-
+#define BUFFER_SIZE (64 * 1024)
 /* MRUBY_BINDING_END */
 
 /* MRUBY_BINDING: ZStream::initialize */
@@ -19,6 +19,8 @@ mrb_value
 mrb_ZLib_ZStream_initialize(mrb_state* mrb, mrb_value self) {
   z_stream* native_object = (z_stream*)calloc(1, sizeof(z_stream));
   mruby_gift_z_stream_data_ptr(self, native_object);
+  native_object->avail_out = BUFFER_SIZE;
+  native_object->next_out = BUFFER_SIZE;
   return self;
 }
 #endif

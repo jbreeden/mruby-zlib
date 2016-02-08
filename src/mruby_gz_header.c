@@ -1,6 +1,6 @@
 /*
  * gz_header
- * Defined in file zlib.h @ line 112
+ * Defined in file zlib.h @ line 119
  */
 
 #include "mruby_ZLib.h"

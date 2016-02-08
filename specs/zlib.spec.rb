@@ -8,6 +8,14 @@ Usage
 -----
 
 EOS
+
+blurb <<-EOS
+### Compress & Uncompress
+
+`compress` & `uncompress` provide a simple API for bulk compression. `compress`
+produces a deflate stream wrapped in a zlib header, and `uncompress` reverses
+that action.
+EOS
   
   desc '`ZLib.compress(src)`' do
     it 'Compresses `src` with default settings & returns the compressed result.' do
@@ -15,7 +23,8 @@ EOS
     end
     
     # Documentation only
-    it "Returns a deflate stream wrapped in a zlib header/footer"
+    it "Returns a deflate stream wrapped in a zlib header/footer" do
+    end
   end
   
   desc '`ZLib.uncompress(max_size, src)`' do
@@ -38,6 +47,12 @@ EOS
     end
   end
   
+blurb <<-EOS
+### GZFile APIs
+
+These functions provide IO for GZip files similar to C's stdlib `fopen`, `fread`, `fwrite`, etc.
+EOS
+
   desc '`ZLib.gzopen(filename, mode)`' do
     it 'Returns a `ZLib::GZFile` based on the given `filename` & `mode` string' do
       f = ZLib.gzopen('delete_me.gz', 'w')
@@ -60,7 +75,7 @@ EOS
       ZLib.gzwrite(f, $src)
       ZLib.gzflush(f, ZLib::Z_FINISH)
       ZLib.gzwrite(f, $src)
-      ZLib.gzflush(f, ZLib::Z_FINISH)
+      ZLib.gzclose(f)
       
       f = ZLib.gzopen('gzwrite.gz', 'r')
       content = ZLib.gzread(f, 10000)
@@ -75,14 +90,42 @@ EOS
     end
   end
   
-  desc 'ZLib.gzflush(file, flush)' do
+  desc '`ZLib.gzflush(file, flush)`' do
+    # Tested in ZLib.gzwrite test above
+    
     it 'Flushes the given file according to the `flush` argument' do
     end
     
-    it '`flush` should be one of `ZLib::Z_NO_FLUSH`, `ZLib::Z_PARTIAL_FLUSH`, `ZLib::Z_SYNC_FLUSH`, `ZLib::Z_FULL_FLUSH`, or `ZLib::Z_FINISH`' do
+    it "`flush` should be one of `ZLib::Z_NO_FLUSH`, `ZLib::Z_PARTIAL_FLUSH`,\n  `ZLib::Z_SYNC_FLUSH`, `ZLib::Z_FULL_FLUSH`, or `ZLib::Z_FINISH`" do
     end
     
     it 'Should be called on `GZFile`s when finished, to ensure the gz file has the proper footer' do
+    end
+  end
+  
+  desc '`ZLib.gzclose(file)`' do
+    # Tested in ZLib.gzwrite test above
+    
+    it 'Closes the given GZFile `file`' do
+      # Covered in the "write after close" test
+    end
+    
+    it 'After a file is closed, write & flush still appear to work (no exceptions), but have no affect' do
+      f = ZLib.gzopen('gzwrite.gz', 'w')
+      assert(!f.nil?)
+      ZLib.gzwrite(f, $src)
+      ZLib.gzclose(f)
+      
+      assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      ZLib.gzflush(f, ZLib::Z_FINISH)
+      
+      f = ZLib.gzopen('gzwrite.gz', 'r')
+      content = ZLib.gzread(f, 10000)
+      assert content == $src
+      File.delete('gzwrite.gz')
     end
   end
 end
