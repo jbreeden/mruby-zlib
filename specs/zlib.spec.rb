@@ -157,7 +157,7 @@ EOS
       assert inflated == $src
     end
     
-    it 'Will process the remaining input and return all output if `flush` is ZLib::Z_FINISH' do
+    it 'Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`' do
     end
   end
   
@@ -166,7 +166,7 @@ EOS
     end
   end
   
-  desc '`ZLib.inflate(stream, str)`' do
+  desc '`ZLib.inflate(stream, flush)`' do
     it 'Inflates `str`, possibly returning a chunk of the uncompressed output' do
       s = ZLib::ZStream.new
       ZLib.deflateInit(s)
@@ -184,7 +184,7 @@ EOS
       assert inflated == ("test1".."test9").to_a.join('')
     end
     
-    it 'Will process the remaining input and return all output if `flush` is ZLib::Z_FINISH' do
+    it 'Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`' do
     end
   end
 end
