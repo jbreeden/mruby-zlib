@@ -156,6 +156,9 @@ EOS
       inflated = ZLib.inflate(t, ZLib::Z_FINISH)
       assert inflated == $src
     end
+    
+    it 'Will process the remaining input and return all output if `flush` is ZLib::Z_FINISH' do
+    end
   end
   
   desc '`ZLib::inflateInit(stream)`' do
@@ -179,6 +182,9 @@ EOS
       t.next_in = out
       inflated = ZLib.inflate(t, ZLib::Z_FINISH)
       assert inflated == ("test1".."test9").to_a.join('')
+    end
+    
+    it 'Will process the remaining input and return all output if `flush` is ZLib::Z_FINISH' do
     end
   end
 end
