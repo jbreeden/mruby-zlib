@@ -62,169 +62,6 @@ EOS
   end
   
 blurb <<-EOS
-### GZFile APIs
-
-These functions provide IO for GZip files similar to C's stdlib `fopen`, `fread`, `fwrite`, etc.
-EOS
-
-  desc '`ZLib.gzopen(filename, mode)`' do
-    it 'Returns a `ZLib::GZFile` based on the given `filename` & `mode` string' do
-      f = ZLib.gzopen('delete_me.gz', 'w')
-      assert f.class == ZLib::GZFile
-      File.delete('delete_me.gz')
-    end
-    
-    it 'Open semantics are like C\'s `fopen` ("w" create a file if it doesn\'t exist, etc.)' do
-    end
-    
-    it 'Returns `nil` if trying to read a file that doesn\'t exist' do
-      assert ZLib.gzopen('dne.gzip', 'r').nil?
-    end
-  end
-  
-  desc '`ZLib.gzwrite(file, str)`' do
-    it 'Compresses `str`, then writes it to `file` (a `ZLib::GZFile`)' do
-      f = ZLib.gzopen('gzwrite.gz', 'w')
-      assert(!f.nil?)
-      ZLib.gzwrite(f, $src)
-      ZLib.gzflush(f, ZLib::Z_FINISH)
-      ZLib.gzwrite(f, $src)
-      ZLib.gzclose(f)
-      
-      f = ZLib.gzopen('gzwrite.gz', 'r')
-      content = ZLib.gzread(f, 10000)
-      assert content == ($src * 2)
-      File.delete('gzwrite.gz')
-    end
-  end
-  
-  desc '`ZLib::gzread(file, size)`' do
-    it 'Reads up to `size` uncompressed bytes from the compressed GZFile `file`' do
-      # Tested in ZLib.gzwrite test above
-    end
-  end
-  
-  desc '`ZLib.gzflush(file, flush)`' do
-    # Tested in ZLib.gzwrite test above
-    
-    it 'Flushes the given file according to the `flush` argument' do
-    end
-    
-    it "`flush` should be one of `ZLib::Z_NO_FLUSH`, `ZLib::Z_PARTIAL_FLUSH`,\n  `ZLib::Z_SYNC_FLUSH`, `ZLib::Z_FULL_FLUSH`, or `ZLib::Z_FINISH`" do
-    end
-    
-    it 'Should be called on `GZFile`s when finished, to ensure the gz file has the proper footer' do
-    end
-  end
-  
-  desc '`ZLib.gzclose(file)`' do
-    # Tested in ZLib.gzwrite test above
-    
-    it 'Closes the given GZFile `file`' do
-      # Covered in the "write after close" test
-    end
-    
-    it 'After a file is closed, write & flush still appear to work (no exceptions), but have no affect' do
-      f = ZLib.gzopen('gzwrite.gz', 'w')
-      assert(!f.nil?)
-      ZLib.gzwrite(f, $src)
-      ZLib.gzclose(f)
-      
-      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      # ZLib.gzflush(f, ZLib::Z_FINISH)
-      
-      f = ZLib.gzopen('gzwrite.gz', 'r')
-      content = ZLib.gzread(f, 10000)
-      assert content == $src
-      File.delete('gzwrite.gz')
-    end
-  end
-  
-blurb <<-EOS
-The following functions marked [SKIPPED] are implemented already, but lacking automated tests.
-EOS
-  
-  desc "`ZLib.gzsetparams(file, level, strategy)`" do
-    it 'Dynamically update the compression level or strategy'
-  end
-  
-  desc "`ZLib.gztell(file)`" do
-    it 'Tells the currect seek position'
-  end
-  
-  desc "`ZLib.gzrewind(file)`" do
-    it 'Seek to the begining of the file'
-  end
-  
-  desc "`ZLib.gzseek(file, offset, whence)`" do
-    it 'Set the location for the next read/write'
-  end
-  
-  desc "`ZLib.gzputs(file, string)`" do
-    it 'Writes the `string` param (which must not contain null characters) to the file'
-  end
-  
-  desc "`ZLib.gzputc(file, char)` (char should be an int as in `'a'.ord`)" do
-    it 'Writes a character'
-  end
-  
-  desc "`ZLib.gzungetc(char, file)` (char should be an int as in `'a'.ord`)" do
-    it 'Ungets a character'
-  end
-  
-  desc "`ZLib.gzbuffer(file, size)`" do
-    it 'Set the internal buffer size used by this library\'s functions'
-  end
-  
-  desc "`ZLib.gzclearerr(file)`" do
-    it 'Clears the error and end-of-file flags for file'
-  end
-  
-  desc "`ZLib.gzdirect(file)`" do
-    it 'Returns true if file is being copied directly while reading, or false if file is a gzip stream being decompressed'
-  end
-  
-  ## Don't document these. They're useless from MRuby (just use `gzclose`)
-  # desc "`ZLib.gzclose_w`" do
-  #   it 'Is bound'
-  # end
-  # 
-  # desc "`ZLib.gzclose_r`" do
-  #   it 'Is bound'
-  # end
-  
-  desc "`ZLib.gzdopen(fd, mode)`" do
-    it 'gzdopen associates a gzFile * with the file descriptor fd.'
-  end
-  
-  desc "`ZLib.gzeof(file)`" do
-    it 'Returns true if the file is at eof, or else false'
-  end
-  
-  desc "`ZLib.gzerror(file)`" do
-    it 'Returns the error message for the last error which occurred on the given compressed file'
-  end
-  
-  desc "`ZLib.gzgetc`" do
-    it 'Reads one byte from the compressed file.'
-    it 'Returns the byte (as an int) or -1 in case of end of file or error.'
-  end
-  
-  desc "`ZLib.gzoffset`" do
-    it 'Returns the current offset in the file being read or written'
-    it 'When reading, the offset does not include as yet unused buffered input'
-    it 'This information can be used for a progress indicator'
-  end
-  
-  desc "`ZLib.gzgets(file)`" do
-    it 'Reads until a newline or eof'
-  end
-  
-  
-blurb <<-EOS
 ### `inflate` & `deflate`
 
 These functions provide a streaming interface for zlib & gzip compression.
@@ -321,5 +158,167 @@ EOS
     
     it 'Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`' do
     end
+  end
+  
+blurb <<-EOS
+### GZFile APIs
+
+These functions provide IO for GZip files similar to C's stdlib `fopen`, `fread`, `fwrite`, etc.
+EOS
+
+  desc '`ZLib.gzopen(filename, mode)`' do
+    it 'Returns a `ZLib::GZFile` based on the given `filename` & `mode` string' do
+      f = ZLib.gzopen('delete_me.gz', 'w')
+      assert f.class == ZLib::GZFile
+      File.delete('delete_me.gz')
+    end
+    
+    it 'Open semantics are like C\'s `fopen` ("w" create a file if it doesn\'t exist, etc.)' do
+    end
+    
+    it 'Returns `nil` if trying to read a file that doesn\'t exist' do
+      assert ZLib.gzopen('dne.gzip', 'r').nil?
+    end
+  end
+  
+  desc '`ZLib.gzwrite(file, str)`' do
+    it 'Compresses `str`, then writes it to `file` (a `ZLib::GZFile`)' do
+      f = ZLib.gzopen('gzwrite.gz', 'w')
+      assert(!f.nil?)
+      ZLib.gzwrite(f, $src)
+      ZLib.gzflush(f, ZLib::Z_FINISH)
+      ZLib.gzwrite(f, $src)
+      ZLib.gzclose(f)
+      
+      f = ZLib.gzopen('gzwrite.gz', 'r')
+      content = ZLib.gzread(f, 10000)
+      assert content == ($src * 2)
+      File.delete('gzwrite.gz')
+    end
+  end
+  
+  desc '`ZLib::gzread(file, size)`' do
+    it 'Reads up to `size` uncompressed bytes from the compressed GZFile `file`' do
+      # Tested in ZLib.gzwrite test above
+    end
+  end
+  
+  desc '`ZLib.gzflush(file, flush)`' do
+    # Tested in ZLib.gzwrite test above
+    
+    it 'Flushes the given file according to the `flush` argument' do
+    end
+    
+    it "`flush` should be one of `ZLib::Z_NO_FLUSH`, `ZLib::Z_PARTIAL_FLUSH`,\n  `ZLib::Z_SYNC_FLUSH`, `ZLib::Z_FULL_FLUSH`, or `ZLib::Z_FINISH`" do
+    end
+    
+    it 'Should be called on `GZFile`s when finished, to ensure the gz file has the proper footer' do
+    end
+  end
+  
+  desc '`ZLib.gzclose(file)`' do
+    # Tested in ZLib.gzwrite test above
+    
+    it 'Closes the given GZFile `file`' do
+      # Covered in the "write after close" test
+    end
+    
+    it 'After a file is closed, write & flush still appear to work (no exceptions), but have no affect' do
+      f = ZLib.gzopen('gzwrite.gz', 'w')
+      assert(!f.nil?)
+      ZLib.gzwrite(f, $src)
+      ZLib.gzclose(f)
+      
+      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      # ZLib.gzflush(f, ZLib::Z_FINISH)
+      
+      f = ZLib.gzopen('gzwrite.gz', 'r')
+      content = ZLib.gzread(f, 10000)
+      assert content == $src
+      File.delete('gzwrite.gz')
+    end
+  end
+  
+blurb <<-EOS
+_The following functions marked [SKIPPED] are implemented already, but lacking automated tests._
+EOS
+  
+  desc "`ZLib.gzsetparams(file, level, strategy)`" do
+    it 'Dynamically update the compression level or strategy'
+  end
+  
+  desc "`ZLib.gztell(file)`" do
+    it 'Tells the currect seek position'
+  end
+  
+  desc "`ZLib.gzrewind(file)`" do
+    it 'Seek to the begining of the file'
+  end
+  
+  desc "`ZLib.gzseek(file, offset, whence)`" do
+    it 'Set the location for the next read/write'
+  end
+  
+  desc "`ZLib.gzputs(file, string)`" do
+    it 'Writes the `string` param (which must not contain null characters) to the file'
+  end
+  
+  desc "`ZLib.gzputc(file, char)` (char should be an int as in `'a'.ord`)" do
+    it 'Writes a character'
+  end
+  
+  desc "`ZLib.gzungetc(char, file)` (char should be an int as in `'a'.ord`)" do
+    it 'Ungets a character'
+  end
+  
+  desc "`ZLib.gzbuffer(file, size)`" do
+    it 'Set the internal buffer size used by this library\'s functions'
+  end
+  
+  desc "`ZLib.gzclearerr(file)`" do
+    it 'Clears the error and end-of-file flags for file'
+  end
+  
+  desc "`ZLib.gzdirect(file)`" do
+    it 'Returns true if file is being copied directly while reading, or false if file is a gzip stream being decompressed'
+  end
+  
+  ## Don't document these. They're useless from MRuby (just use `gzclose`)
+  # desc "`ZLib.gzclose_w`" do
+  #   it 'Is bound'
+  # end
+  # 
+  # desc "`ZLib.gzclose_r`" do
+  #   it 'Is bound'
+  # end
+  
+  desc "`ZLib.gzdopen(fd, mode)`" do
+    it 'gzdopen associates a gzFile * with the file descriptor fd.'
+  end
+  
+  desc "`ZLib.gzeof(file)`" do
+    it 'Returns true if the file is at eof, or else false'
+  end
+  
+  desc "`ZLib.gzerror(file)`" do
+    it 'Returns the error message for the last error which occurred on the given compressed file'
+  end
+  
+  desc "`ZLib.gzgetc`" do
+    it 'Reads one byte from the compressed file.'
+    it 'Returns the byte (as an int) or -1 in case of end of file or error.'
+  end
+  
+  desc "`ZLib.gzoffset`" do
+    it 'Returns the current offset in the file being read or written'
+    it 'When reading, the offset does not include as yet unused buffered input'
+    it 'This information can be used for a progress indicator'
+  end
+  
+  desc "`ZLib.gzgets(file)`" do
+    it 'Reads until a newline or eof'
   end
 end

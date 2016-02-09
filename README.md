@@ -24,6 +24,28 @@ that action.
   + Raises a `ZLib::ZBufferError` if `max_size` is not >= the size of the uncompressed data
   + Raises a `ZLib::ZDataError` if the input string is incomplete
 
+### `inflate` & `deflate`
+
+These functions provide a streaming interface for zlib & gzip compression.
+
+- `ZLib::deflateInit(stream, level = ZLib::Z_DEFAULT_COMPRESSION)`
+  + Initalizes a stream to deflate at the given `level`
+  + `level` defaults to 6 (ZLib::Z_DEFAULT_COMPRESSION)
+
+- `ZLib.deflate(stream, flush)`
+  + Deflates all of `stream.next_in`, possibly returning a chunk of the compressed output
+  + Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`
+  + Raises a ZBufferError if `Z_FINISH` is used twice
+  + Raises a `ZLib::ZStreamError` if used on a stream that has been finished already
+
+- `ZLib::inflateInit(stream)`
+  + Initalizes a stream to inflate data
+
+- `ZLib.inflate(stream, flush)`
+  + Inflates `str`, possibly returning a chunk of the uncompressed output
+  + Returns the empty string if the stream has already been finished (TODO: should probably raise)
+  + Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`
+
 ### GZFile APIs
 
 These functions provide IO for GZip files similar to C's stdlib `fopen`, `fread`, `fwrite`, etc.
@@ -49,7 +71,7 @@ These functions provide IO for GZip files similar to C's stdlib `fopen`, `fread`
   + Closes the given GZFile `file`
   + After a file is closed, write & flush still appear to work (no exceptions), but have no affect
 
-The following functions marked [SKIPPED] are implemented already, but lacking automated tests.
+_The following functions marked [SKIPPED] are implemented already, but lacking automated tests._
 
 - `ZLib.gzsetparams(file, level, strategy)`
   + [SKIPPED] Dynamically update the compression level or strategy
@@ -101,28 +123,6 @@ The following functions marked [SKIPPED] are implemented already, but lacking au
 
 - `ZLib.gzgets(file)`
   + [SKIPPED] Reads until a newline or eof
-
-### `inflate` & `deflate`
-
-These functions provide a streaming interface for zlib & gzip compression.
-
-- `ZLib::deflateInit(stream, level = ZLib::Z_DEFAULT_COMPRESSION)`
-  + Initalizes a stream to deflate at the given `level`
-  + `level` defaults to 6 (ZLib::Z_DEFAULT_COMPRESSION)
-
-- `ZLib.deflate(stream, flush)`
-  + Deflates all of `stream.next_in`, possibly returning a chunk of the compressed output
-  + Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`
-  + Raises a ZBufferError if `Z_FINISH` is used twice
-  + Raises a `ZLib::ZStreamError` if used on a stream that has been finished already
-
-- `ZLib::inflateInit(stream)`
-  + Initalizes a stream to inflate data
-
-- `ZLib.inflate(stream, flush)`
-  + Inflates `str`, possibly returning a chunk of the uncompressed output
-  + Returns the empty string if the stream has already been finished (TODO: should probably raise)
-  + Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`
 
 
 SUCCESS [0 failed, 19 skipped, 45 total]
