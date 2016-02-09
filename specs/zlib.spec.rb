@@ -24,7 +24,7 @@ Usage
 EOS
 
 blurb <<-EOS
-### Compress & Uncompress
+### `compress` & `uncompress`
 
 `compress` & `uncompress` provide a simple API for bulk compression. `compress`
 produces a deflate stream wrapped in a zlib header, and `uncompress` reverses
@@ -161,7 +161,7 @@ EOS
   end
   
 blurb <<-EOS
-### GZFile APIs
+### `GZFile` APIs
 
 These functions provide IO for GZip files similar to C's stdlib `fopen`, `fread`, `fwrite`, etc.
 EOS

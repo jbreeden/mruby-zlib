@@ -8,7 +8,7 @@ Usage
 -----
 
 
-### Compress & Uncompress
+### `compress` & `uncompress`
 
 `compress` & `uncompress` provide a simple API for bulk compression. `compress`
 produces a deflate stream wrapped in a zlib header, and `uncompress` reverses
@@ -46,7 +46,7 @@ These functions provide a streaming interface for zlib & gzip compression.
   + Returns the empty string if the stream has already been finished (TODO: should probably raise)
   + Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`
 
-### GZFile APIs
+### `GZFile` APIs
 
 These functions provide IO for GZip files similar to C's stdlib `fopen`, `fread`, `fwrite`, etc.
 
