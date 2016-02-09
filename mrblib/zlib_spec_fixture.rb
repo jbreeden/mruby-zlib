@@ -77,6 +77,10 @@ class ZLib::Spec
   alias context describe
 
   def it(label, &block)
+    if ENV['SPEC'] && ! (Regexp.new(ENV['SPEC']) =~ label)
+      return nil
+    end
+    
     @current_test_passed = true
     @current_test_pending = false
     exc = nil

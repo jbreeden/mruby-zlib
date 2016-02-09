@@ -2,7 +2,7 @@
 ZLib
 ----
 
-Binding to ZLib for MRuby.
+Bindings to ZLib for MRuby.
 
 Usage
 -----
@@ -49,6 +49,59 @@ These functions provide IO for GZip files similar to C's stdlib `fopen`, `fread`
   + Closes the given GZFile `file`
   + After a file is closed, write & flush still appear to work (no exceptions), but have no affect
 
+The following functions marked [SKIPPED] are implemented already, but lacking automated tests.
+
+- `ZLib.gzsetparams(file, level, strategy)`
+  + [SKIPPED] Dynamically update the compression level or strategy
+
+- `ZLib.gztell(file)`
+  + [SKIPPED] Tells the currect seek position
+
+- `ZLib.gzrewind(file)`
+  + [SKIPPED] Seek to the begining of the file
+
+- `ZLib.gzseek(file, offset, whence)`
+  + [SKIPPED] Set the location for the next read/write
+
+- `ZLib.gzputs(file, string)`
+  + [SKIPPED] Writes the `string` param (which must not contain null characters) to the file
+
+- `ZLib.gzputc(file, char)` (char should be an int as in `'a'.ord`)
+  + [SKIPPED] Writes a character
+
+- `ZLib.gzungetc(char, file)` (char should be an int as in `'a'.ord`)
+  + [SKIPPED] Ungets a character
+
+- `ZLib.gzbuffer(file, size)`
+  + [SKIPPED] Set the internal buffer size used by this library's functions
+
+- `ZLib.gzclearerr(file)`
+  + [SKIPPED] Clears the error and end-of-file flags for file
+
+- `ZLib.gzdirect(file)`
+  + [SKIPPED] Returns true if file is being copied directly while reading, or false if file is a gzip stream being decompressed
+
+- `ZLib.gzdopen(fd, mode)`
+  + [SKIPPED] gzdopen associates a gzFile * with the file descriptor fd.
+
+- `ZLib.gzeof(file)`
+  + [SKIPPED] Returns true if the file is at eof, or else false
+
+- `ZLib.gzerror(file)`
+  + [SKIPPED] Returns the error message for the last error which occurred on the given compressed file
+
+- `ZLib.gzgetc`
+  + [SKIPPED] Reads one byte from the compressed file.
+  + [SKIPPED] Returns the byte (as an int) or -1 in case of end of file or error.
+
+- `ZLib.gzoffset`
+  + [SKIPPED] Returns the current offset in the file being read or written
+  + [SKIPPED] When reading, the offset does not include as yet unused buffered input
+  + [SKIPPED] This information can be used for a progress indicator
+
+- `ZLib.gzgets(file)`
+  + [SKIPPED] Reads until a newline or eof
+
 ### `inflate` & `deflate`
 
 These functions provide a streaming interface for zlib & gzip compression.
@@ -60,13 +113,16 @@ These functions provide a streaming interface for zlib & gzip compression.
 - `ZLib.deflate(stream, flush)`
   + Deflates all of `stream.next_in`, possibly returning a chunk of the compressed output
   + Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`
+  + Raises a ZBufferError if `Z_FINISH` is used twice
+  + Raises a `ZLib::ZStreamError` if used on a stream that has been finished already
 
 - `ZLib::inflateInit(stream)`
   + Initalizes a stream to inflate data
 
 - `ZLib.inflate(stream, flush)`
   + Inflates `str`, possibly returning a chunk of the uncompressed output
+  + Returns the empty string if the stream has already been finished (TODO: should probably raise)
   + Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`
 
 
-SUCCESS [0 failed, 0 skipped, 23 total]
+SUCCESS [0 failed, 19 skipped, 45 total]

@@ -277,6 +277,7 @@ mrb_ZLib_deflate(mrb_state* mrb, mrb_value self) {
   mrb_value result = mrb_str_new(mrb, "", 0);
   int ready_out = buffer_size - native_strm->avail_out;
   do {
+    /* Grab any pending output from previous iteration & reset output buffer */
     char * buffer_start = ((mruby_z_stream *)native_strm)->buffer_start;
     if (ready_out > 0) {
       mrb_str_cat(mrb, result, buffer_start, ready_out);
@@ -284,9 +285,17 @@ mrb_ZLib_deflate(mrb_state* mrb, mrb_value self) {
     native_strm->next_out = buffer_start;
     native_strm->avail_out = buffer_size;
     
+    /* Normally (when not flushing) we only invoke if there is input available.
+       This prevents Z_BUF_ERROR from lack of input data.
+       
+       When flushing, invoke every time. The loop will exit
+       when no new output is generated.
+     */
     int result = Z_OK;
-    result = deflate(native_strm, native_flush);
-    if (result != Z_OK && result != Z_BUF_ERROR) {
+    if (native_strm->avail_in > 0 || native_flush != Z_NO_FLUSH) {
+      result = deflate(native_strm, native_flush);
+    }
+    if (result != Z_OK) {
       raise_zlib_errno(mrb, result);
     }
     ready_out = buffer_size - native_strm->avail_out;
@@ -1054,10 +1063,7 @@ mrb_ZLib_gzdirect(mrb_state* mrb, mrb_value self) {
   /* Invocation */
   int native_return_value = gzdirect(native_file);
 
-  /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  return native_return_value == 1 ? mrb_true_value() : mrb_false_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -1113,9 +1119,7 @@ mrb_ZLib_gzeof(mrb_state* mrb, mrb_value self) {
   int native_return_value = gzeof(native_file);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  return native_return_value == 1 ? mrb_true_value() : mrb_false_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -1146,7 +1150,7 @@ mrb_ZLib_gzerror(mrb_state* mrb, mrb_value self) {
   int err = 0;
   const char * native_return_value = gzerror(native_file, &err);
 
-  return mrb_fixnum_value(err);
+  return mrb_str_new_cstr(mrb, native_return_value);
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -1759,10 +1763,11 @@ mrb_ZLib_inflate(mrb_state* mrb, mrb_value self) {
     native_strm->avail_in = RSTRING_LEN(next_in_as_str);
   }
     
-  /** Run until no more output is generated and no more input */
+  /** Run until no more output is generated */
   mrb_value result = mrb_str_new(mrb, "", 0);
   int ready_out = buffer_size - native_strm->avail_out;
   do {
+    /* Grab any pending output from previous iteration & reset output buffer */
     char * buffer_start = ((mruby_z_stream *)native_strm)->buffer_start;
     if (ready_out > 0) {
       mrb_str_cat(mrb, result, buffer_start, ready_out);
@@ -1770,16 +1775,30 @@ mrb_ZLib_inflate(mrb_state* mrb, mrb_value self) {
     native_strm->next_out = buffer_start;
     native_strm->avail_out = buffer_size;
     
+    /* Normally (when not flushing) we only invoke if there is input available.
+       This prevents Z_BUF_ERROR from lack of input data.
+       
+       When flushing, invoke every time. The loop will exit
+       when no new output is generated.
+     */
     int result = Z_OK;
-    result = inflate(native_strm, native_flush);
-    if (result != Z_OK && result != Z_BUF_ERROR) {
+    if (native_strm->avail_in > 0 || native_flush != Z_NO_FLUSH) {
+      result = inflate(native_strm, native_flush);
+    }
+    if (result != Z_OK) {
       raise_zlib_errno(mrb, result);
     }
     ready_out = buffer_size - native_strm->avail_out;
   } while (ready_out > 0 || native_strm->avail_in > 0);
-  
+
   return result;
 }
+/* Buffer error on no available input is not an error condition,
+   so don't raise it unless avail_in != 0
+ */
+// if (result != Z_OK && (result != Z_BUF_ERROR || native_strm->avail_in != 0)) {
+//   raise_zlib_errno(mrb, result);
+// }
 #endif
 /* MRUBY_BINDING_END */
 
@@ -2651,6 +2670,8 @@ void mrb_mruby_zlib_gem_init(mrb_state* mrb) {
   mrb_define_class_under(mrb, ZLib_module, "ZMemoryError", ZError_class(mrb));
   mrb_define_class_under(mrb, ZLib_module, "ZVersionError", ZError_class(mrb));
    
+#undef BIND_gzgetc__FUNCTION
+#define BIND_gzgetc__FUNCTION FALSE
 /* MRUBY_BINDING_END */
 
 /* MRUBY_BINDING: global_function_definitions */

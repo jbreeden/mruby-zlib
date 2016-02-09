@@ -1,8 +1,22 @@
 $src = 'test' * 1000
 
+=begin
+You will notice that some of the "specs" here have empty bodies, while some have
+no body at all. If a spec has no body, it is reported as skipped. This is a clue
+to me that I want to come back and fill in tests. Tests with empty bodies are
+not reported as skipped. This should only be done when the spec describes something
+that is already tested *in another test*. This way the output doesn't imply
+the feature isn't tested, when it is.
+
+TODO: Provide a switch to ignore documentation-only output for test runs.
+      (If the doc output looks like a passing test, it confuses your reasoning about the bug)
+TODO: Provide a way to "silence" test-only output for documentation generation.
+      (Maybe useful for seriously obscure test cases, but mainly as a dual for the above.)
+=end
+
 ZLib::Spec.new("ZLib") do
   blurb <<-EOS
-Binding to ZLib for MRuby.
+Bindings to ZLib for MRuby.
 
 Usage
 -----
@@ -81,7 +95,7 @@ EOS
       content = ZLib.gzread(f, 10000)
       assert content == ($src * 2)
       File.delete('gzwrite.gz')
-    end    
+    end
   end
   
   desc '`ZLib::gzread(file, size)`' do
@@ -116,11 +130,11 @@ EOS
       ZLib.gzwrite(f, $src)
       ZLib.gzclose(f)
       
-      assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      ZLib.gzflush(f, ZLib::Z_FINISH)
+      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      # ZLib.gzflush(f, ZLib::Z_FINISH)
       
       f = ZLib.gzopen('gzwrite.gz', 'r')
       content = ZLib.gzread(f, 10000)
@@ -128,6 +142,87 @@ EOS
       File.delete('gzwrite.gz')
     end
   end
+  
+blurb <<-EOS
+The following functions marked [SKIPPED] are implemented already, but lacking automated tests.
+EOS
+  
+  desc "`ZLib.gzsetparams(file, level, strategy)`" do
+    it 'Dynamically update the compression level or strategy'
+  end
+  
+  desc "`ZLib.gztell(file)`" do
+    it 'Tells the currect seek position'
+  end
+  
+  desc "`ZLib.gzrewind(file)`" do
+    it 'Seek to the begining of the file'
+  end
+  
+  desc "`ZLib.gzseek(file, offset, whence)`" do
+    it 'Set the location for the next read/write'
+  end
+  
+  desc "`ZLib.gzputs(file, string)`" do
+    it 'Writes the `string` param (which must not contain null characters) to the file'
+  end
+  
+  desc "`ZLib.gzputc(file, char)` (char should be an int as in `'a'.ord`)" do
+    it 'Writes a character'
+  end
+  
+  desc "`ZLib.gzungetc(char, file)` (char should be an int as in `'a'.ord`)" do
+    it 'Ungets a character'
+  end
+  
+  desc "`ZLib.gzbuffer(file, size)`" do
+    it 'Set the internal buffer size used by this library\'s functions'
+  end
+  
+  desc "`ZLib.gzclearerr(file)`" do
+    it 'Clears the error and end-of-file flags for file'
+  end
+  
+  desc "`ZLib.gzdirect(file)`" do
+    it 'Returns true if file is being copied directly while reading, or false if file is a gzip stream being decompressed'
+  end
+  
+  ## Don't document these. They're useless from MRuby (just use `gzclose`)
+  # desc "`ZLib.gzclose_w`" do
+  #   it 'Is bound'
+  # end
+  # 
+  # desc "`ZLib.gzclose_r`" do
+  #   it 'Is bound'
+  # end
+  
+  desc "`ZLib.gzdopen(fd, mode)`" do
+    it 'gzdopen associates a gzFile * with the file descriptor fd.'
+  end
+  
+  desc "`ZLib.gzeof(file)`" do
+    it 'Returns true if the file is at eof, or else false'
+  end
+  
+  desc "`ZLib.gzerror(file)`" do
+    it 'Returns the error message for the last error which occurred on the given compressed file'
+  end
+  
+  desc "`ZLib.gzgetc`" do
+    it 'Reads one byte from the compressed file.'
+    it 'Returns the byte (as an int) or -1 in case of end of file or error.'
+  end
+  
+  desc "`ZLib.gzoffset`" do
+    it 'Returns the current offset in the file being read or written'
+    it 'When reading, the offset does not include as yet unused buffered input'
+    it 'This information can be used for a progress indicator'
+  end
+  
+  desc "`ZLib.gzgets(file)`" do
+    it 'Reads until a newline or eof'
+  end
+  
   
 blurb <<-EOS
 ### `inflate` & `deflate`
@@ -159,6 +254,30 @@ EOS
     
     it 'Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`' do
     end
+        
+    it 'Raises a ZBufferError if `Z_FINISH` is used twice' do
+      assert_raises(ZLib::ZBufferError) do
+        s = ZLib::ZStream.new
+        ZLib.deflateInit(s)
+        out = ''
+        (1..2).each do |i|
+          s.next_in = "test#{i}"
+          out << ZLib.deflate(s, ZLib::Z_FINISH)
+        end
+      end
+    end
+    
+    it 'Raises a `ZLib::ZStreamError` if used on a stream that has been finished already' do
+      assert_raises(ZLib::ZStreamError) do
+        s = ZLib::ZStream.new
+        ZLib.deflateInit(s)
+        s.next_in = "test1"
+        ZLib.deflate(s, ZLib::Z_FINISH)
+        s.next_in = "test2"
+        ZLib.deflate(s)
+      end
+    end
+    
   end
   
   desc '`ZLib::inflateInit(stream)`' do
@@ -182,6 +301,22 @@ EOS
       t.next_in = out
       inflated = ZLib.inflate(t, ZLib::Z_FINISH)
       assert inflated == ("test1".."test9").to_a.join('')
+    end
+
+    it 'Returns the empty string if the stream has already been finished (TODO: should probably raise)' do
+      s = ZLib::ZStream.new
+      ZLib.deflateInit(s)
+      out = ''
+      s.next_in = $src
+      out << ZLib.deflate(s, ZLib::Z_FINISH)
+      
+      t = ZLib::ZStream.new
+      ZLib.inflateInit(t)
+      t.next_in = out[0..100]
+      inflated = ZLib.inflate(t, ZLib::Z_FINISH)
+      t.next_in = out[101..(out.length)]
+      inflated = ZLib.inflate(t, ZLib::Z_FINISH)
+      assert inflated == ''
     end
     
     it 'Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`' do
