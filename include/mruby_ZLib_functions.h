@@ -14,8 +14,6 @@
 #define BIND_deflateEnd_FUNCTION TRUE
 #define BIND_deflateInit_FUNCTION TRUE
 #define BIND_deflateInit2_FUNCTION TRUE
-#define BIND_deflateInit2__FUNCTION TRUE
-#define BIND_deflateInit__FUNCTION TRUE
 #define BIND_deflateParams_FUNCTION TRUE
 #define BIND_deflatePrime_FUNCTION TRUE
 #define BIND_deflateReset_FUNCTION TRUE
@@ -35,7 +33,6 @@
 #define BIND_gzerror_FUNCTION TRUE
 #define BIND_gzflush_FUNCTION TRUE
 #define BIND_gzgetc_FUNCTION TRUE
-#define BIND_gzgetc__FUNCTION TRUE
 #define BIND_gzgets_FUNCTION TRUE
 #define BIND_gzoffset_FUNCTION TRUE
 #define BIND_gzopen_FUNCTION TRUE
@@ -51,15 +48,12 @@
 #define BIND_inflate_FUNCTION TRUE
 #define BIND_inflateBack_FUNCTION FALSE
 #define BIND_inflateBackEnd_FUNCTION TRUE
-#define BIND_inflateBackInit__FUNCTION FALSE
 #define BIND_inflateCopy_FUNCTION TRUE
 #define BIND_inflateEnd_FUNCTION TRUE
 #define BIND_inflateGetDictionary_FUNCTION FALSE
 #define BIND_inflateGetHeader_FUNCTION TRUE
 #define BIND_inflateInit_FUNCTION TRUE
 #define BIND_inflateInit2_FUNCTION TRUE
-#define BIND_inflateInit2__FUNCTION TRUE
-#define BIND_inflateInit__FUNCTION TRUE
 #define BIND_inflateMark_FUNCTION TRUE
 #define BIND_inflatePrime_FUNCTION TRUE
 #define BIND_inflateReset_FUNCTION TRUE

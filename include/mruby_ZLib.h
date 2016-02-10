@@ -17,6 +17,7 @@
 
 /* MRUBY_BINDING: pre_includes */
 /* sha: user_defined */
+
 /* MRUBY_BINDING_END */
 
 /* MRUBY_BINDING: includes */

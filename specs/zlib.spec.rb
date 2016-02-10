@@ -60,7 +60,7 @@ EOS
       assert_raises(ZLib::ZDataError) { ZLib.uncompress($src.length, input) }
     end
   end
-  
+
 blurb <<-EOS
 ### `inflate` & `deflate`
 
@@ -72,6 +72,12 @@ EOS
     end
   
     it '`level` defaults to 6 (ZLib::Z_DEFAULT_COMPRESSION)' do
+    end
+    
+    it 'Raises a `ZLib::ZStreamError` if called on a previously initialized stream' do
+      s = ZLib::ZStream.new
+      ZLib.deflateInit(s)
+      assert_raises(ZLib::ZStreamError) { ZLib.deflateInit(s) }
     end
   end
   
@@ -118,6 +124,12 @@ EOS
   
   desc '`ZLib::inflateInit(stream)`' do
     it 'Initalizes a stream to inflate data' do
+    end
+    
+    it 'Raises a `ZLib::ZStreamError` if called on a previously initialized stream' do
+      s = ZLib::ZStream.new
+      ZLib.inflateInit(s)
+      assert_raises(ZLib::ZStreamError) { ZLib.inflateInit(s) }
     end
   end
   
@@ -257,11 +269,11 @@ EOS
       ZLib.gzwrite(f, $src)
       ZLib.gzclose(f)
       
-      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      # assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      # ZLib.gzflush(f, ZLib::Z_FINISH)
+      assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      assert 16 == ZLib.gzwrite(f, 'x' * 16)
+      ZLib.gzflush(f, ZLib::Z_FINISH)
       
       f = ZLib.gzopen('gzwrite.gz', 'r')
       content = ZLib.gzread(f, 10000)

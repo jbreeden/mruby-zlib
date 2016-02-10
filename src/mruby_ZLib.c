@@ -374,9 +374,8 @@ mrb_ZLib_deflateCopy(mrb_state* mrb, mrb_value self) {
   int native_return_value = deflateCopy(native_dest, native_source);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -438,15 +437,19 @@ mrb_ZLib_deflateInit(mrb_state* mrb, mrb_value self) {
 
   /* Unbox param: strm */
   z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
-  ((mruby_z_stream *)native_strm)->type = DEFLATE_STREAM;
+  if (((mruby_z_stream *)native_strm)->type != UNINITIALIZED_STREAM) {
+    mrb_raise(mrb, ZStreamError_class(mrb), "Stream already initialized");
+    return mrb_nil_value();
+  } else {
+    ((mruby_z_stream *)native_strm)->type = DEFLATE_STREAM;
+  }
   
   /* Invocation */
   int native_return_value = deflateInit(native_strm, native_level);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -477,91 +480,19 @@ mrb_ZLib_deflateInit2(mrb_state* mrb, mrb_value self) {
 
   /* Unbox param: strm */
   z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
-  ((mruby_z_stream *)native_strm)->type = DEFLATE_STREAM;
+  if (((mruby_z_stream *)native_strm)->type != UNINITIALIZED_STREAM) {
+    mrb_raise(mrb, ZStreamError_class(mrb), "Stream already initialized");
+    return mrb_nil_value();
+  } else {
+    ((mruby_z_stream *)native_strm)->type = DEFLATE_STREAM;
+  }
   
   /* Invocation */
   int native_return_value = deflateInit2(native_strm, native_level, native_method, native_windowBits, native_memLevel, native_strategy);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
-}
-#endif
-/* MRUBY_BINDING_END */
-
-/* MRUBY_BINDING: deflateInit2_ */
-/* sha: dc4eae1d59e6ce4b00e0bf4c185f1079573e42f4acdc731e328c6ee1f66c418b */
-#if BIND_deflateInit2__FUNCTION
-#define deflateInit2__REQUIRED_ARGC 8
-#define deflateInit2__OPTIONAL_ARGC 0
-/* int deflateInit2_(z_stream * strm, int level, int method, int windowBits, int memLevel, int strategy, const char * version, int stream_size) */
-mrb_value
-mrb_ZLib_deflateInit2_(mrb_state* mrb, mrb_value self) {
-  mrb_value strm;
-  mrb_int native_level;
-  mrb_int native_method;
-  mrb_int native_windowBits;
-  mrb_int native_memLevel;
-  mrb_int native_strategy;
-  char * native_version = NULL;
-  mrb_int native_stream_size;
-
-  /* Fetch the args */
-  mrb_get_args(mrb, "oiiiiizi", &strm, &native_level, &native_method, &native_windowBits, &native_memLevel, &native_strategy, &native_version, &native_stream_size);
-
-  /* Type checking */
-  if (!mrb_obj_is_kind_of(mrb, strm, ZStream_class(mrb))) {
-    mrb_raise(mrb, E_TYPE_ERROR, "ZStream expected");
-    return mrb_nil_value();
-  }
-
-  /* Unbox param: strm */
-  z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
-
-  /* Invocation */
-  int native_return_value = deflateInit2_(native_strm, native_level, native_method, native_windowBits, native_memLevel, native_strategy, native_version, native_stream_size);
-
-  /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
-}
-#endif
-/* MRUBY_BINDING_END */
-
-/* MRUBY_BINDING: deflateInit_ */
-/* sha: 372ab77435d9b583092abfbf91316bc1f217e1361e3368b740315aa2866bf82a */
-#if BIND_deflateInit__FUNCTION
-#define deflateInit__REQUIRED_ARGC 4
-#define deflateInit__OPTIONAL_ARGC 0
-/* int deflateInit_(z_stream * strm, int level, const char * version, int stream_size) */
-mrb_value
-mrb_ZLib_deflateInit_(mrb_state* mrb, mrb_value self) {
-  mrb_value strm;
-  mrb_int native_level;
-  char * native_version = NULL;
-  mrb_int native_stream_size;
-
-  /* Fetch the args */
-  mrb_get_args(mrb, "oizi", &strm, &native_level, &native_version, &native_stream_size);
-
-  /* Type checking */
-  if (!mrb_obj_is_kind_of(mrb, strm, ZStream_class(mrb))) {
-    mrb_raise(mrb, E_TYPE_ERROR, "ZStream expected");
-    return mrb_nil_value();
-  }
-
-  /* Unbox param: strm */
-  z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
-
-  /* Invocation */
-  int native_return_value = deflateInit_(native_strm, native_level, native_version, native_stream_size);
-
-  /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -594,9 +525,8 @@ mrb_ZLib_deflateParams(mrb_state* mrb, mrb_value self) {
   int native_return_value = deflateParams(native_strm, native_level, native_strategy);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -670,9 +600,8 @@ mrb_ZLib_deflatePrime(mrb_state* mrb, mrb_value self) {
   int native_return_value = deflatePrime(native_strm, native_bits, native_value);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -703,9 +632,8 @@ mrb_ZLib_deflateReset(mrb_state* mrb, mrb_value self) {
   int native_return_value = deflateReset(native_strm);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -736,9 +664,8 @@ mrb_ZLib_deflateResetKeep(mrb_state* mrb, mrb_value self) {
   int native_return_value = deflateResetKeep(native_arg1);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -775,9 +702,8 @@ mrb_ZLib_deflateSetDictionary(mrb_state* mrb, mrb_value self) {
   int native_return_value = deflateSetDictionary(native_strm, native_dictionary, native_dictLength);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -816,9 +742,8 @@ mrb_ZLib_deflateSetHeader(mrb_state* mrb, mrb_value self) {
   int native_return_value = deflateSetHeader(native_strm, native_head);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -853,9 +778,8 @@ mrb_ZLib_deflateTune(mrb_state* mrb, mrb_value self) {
   int native_return_value = deflateTune(native_strm, native_good_length, native_max_lazy, native_nice_length, native_max_chain);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -1222,39 +1146,6 @@ mrb_ZLib_gzgetc(mrb_state* mrb, mrb_value self) {
     gzerror(native_file, &err);
     raise_zlib_errno(mrb, err);
   }
-
-  /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
-}
-#endif
-/* MRUBY_BINDING_END */
-
-/* MRUBY_BINDING: gzgetc_ */
-/* sha: fb800ec0f119fe0737129e77cc2ec114865d5cce2bdc65d5063e7b9af62e5ab9 */
-#if BIND_gzgetc__FUNCTION
-#define gzgetc__REQUIRED_ARGC 1
-#define gzgetc__OPTIONAL_ARGC 0
-/* int gzgetc_(gzFile * file) */
-mrb_value
-mrb_ZLib_gzgetc_(mrb_state* mrb, mrb_value self) {
-  mrb_value file;
-
-  /* Fetch the args */
-  mrb_get_args(mrb, "o", &file);
-
-  /* Type checking */
-  if (!mrb_obj_is_kind_of(mrb, file, GZFile_class(mrb))) {
-    mrb_raise(mrb, E_TYPE_ERROR, "GZFile expected");
-    return mrb_nil_value();
-  }
-
-  /* Unbox param: file */
-  gzFile * native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
-
-  /* Invocation */
-  int native_return_value = gzgetc_(native_file);
 
   /* Box the return value */
   mrb_value return_value = mrb_fixnum_value(native_return_value);
@@ -1892,47 +1783,6 @@ mrb_ZLib_inflateBackEnd(mrb_state* mrb, mrb_value self) {
 #endif
 /* MRUBY_BINDING_END */
 
-/* MRUBY_BINDING: inflateBackInit_ */
-/* sha: 73aa0ba00023c2fbaaa91131b97d07748ade1de8b9ba1abeb8c3dc3887e54446 */
-#if BIND_inflateBackInit__FUNCTION
-#define inflateBackInit__REQUIRED_ARGC 5
-#define inflateBackInit__OPTIONAL_ARGC 0
-/* int inflateBackInit_(z_stream * strm, int windowBits, unsigned char * window, const char * version, int stream_size) */
-mrb_value
-mrb_ZLib_inflateBackInit_(mrb_state* mrb, mrb_value self) {
-  mrb_value strm;
-  mrb_int native_windowBits;
-  mrb_value window;
-  char * native_version = NULL;
-  mrb_int native_stream_size;
-
-  /* Fetch the args */
-  mrb_get_args(mrb, "oiozi", &strm, &native_windowBits, &window, &native_version, &native_stream_size);
-
-  /* Type checking */
-  if (!mrb_obj_is_kind_of(mrb, strm, ZStream_class(mrb))) {
-    mrb_raise(mrb, E_TYPE_ERROR, "ZStream expected");
-    return mrb_nil_value();
-  }
-  TODO_type_check_unsigned_char_PTR(window);
-
-  /* Unbox param: strm */
-  z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
-
-  /* Unbox param: window */
-  unsigned char * native_window = TODO_mruby_unbox_unsigned_char_PTR(window);
-
-  /* Invocation */
-  int native_return_value = inflateBackInit_(native_strm, native_windowBits, native_window, native_version, native_stream_size);
-
-  /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
-}
-#endif
-/* MRUBY_BINDING_END */
-
 /* MRUBY_BINDING: inflateCopy */
 /* sha: 99da49a8dda0c6810a8f2eb2662eca73a2be05d94f8d8cfd861d6821065179a1 */
 #if BIND_inflateCopy_FUNCTION
@@ -1967,9 +1817,8 @@ mrb_ZLib_inflateCopy(mrb_state* mrb, mrb_value self) {
   int native_return_value = inflateCopy(native_dest, native_source);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2046,9 +1895,8 @@ mrb_ZLib_inflateGetDictionary(mrb_state* mrb, mrb_value self) {
   int native_return_value = inflateGetDictionary(native_strm, native_dictionary, native_dictLength);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2087,9 +1935,8 @@ mrb_ZLib_inflateGetHeader(mrb_state* mrb, mrb_value self) {
   int native_return_value = inflateGetHeader(native_strm, native_head);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2118,12 +1965,16 @@ mrb_ZLib_inflateInit(mrb_state* mrb, mrb_value self) {
 
   /* Invocation */
   int native_return_value = inflateInit(native_strm);
-  ((mruby_z_stream *)native_strm)->type = INFLATE_STREAM;
+  if (((mruby_z_stream *)native_strm)->type != UNINITIALIZED_STREAM) {
+    mrb_raise(mrb, ZStreamError_class(mrb), "Stream already initialized");
+    return mrb_nil_value();
+  } else {
+    ((mruby_z_stream *)native_strm)->type = INFLATE_STREAM;
+  }
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2150,86 +2001,19 @@ mrb_ZLib_inflateInit2(mrb_state* mrb, mrb_value self) {
 
   /* Unbox param: strm */
   z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
-  ((mruby_z_stream *)native_strm)->type = INFLATE_STREAM;
+  if (((mruby_z_stream *)native_strm)->type != UNINITIALIZED_STREAM) {
+    mrb_raise(mrb, ZStreamError_class(mrb), "Stream already initialized");
+    return mrb_nil_value();
+  } else {
+    ((mruby_z_stream *)native_strm)->type = INFLATE_STREAM;
+  }
 
   /* Invocation */
   int native_return_value = inflateInit2(native_strm, native_windowBits);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
-}
-#endif
-/* MRUBY_BINDING_END */
-
-/* MRUBY_BINDING: inflateInit2_ */
-/* sha: a118b5ad0a29b6b01c56fec1c96dcf52f2e1e2f43eedb70705d798341db9b421 */
-#if BIND_inflateInit2__FUNCTION
-#define inflateInit2__REQUIRED_ARGC 4
-#define inflateInit2__OPTIONAL_ARGC 0
-/* int inflateInit2_(z_stream * strm, int windowBits, const char * version, int stream_size) */
-mrb_value
-mrb_ZLib_inflateInit2_(mrb_state* mrb, mrb_value self) {
-  mrb_value strm;
-  mrb_int native_windowBits;
-  char * native_version = NULL;
-  mrb_int native_stream_size;
-
-  /* Fetch the args */
-  mrb_get_args(mrb, "oizi", &strm, &native_windowBits, &native_version, &native_stream_size);
-
-  /* Type checking */
-  if (!mrb_obj_is_kind_of(mrb, strm, ZStream_class(mrb))) {
-    mrb_raise(mrb, E_TYPE_ERROR, "ZStream expected");
-    return mrb_nil_value();
-  }
-
-  /* Unbox param: strm */
-  z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
-
-  /* Invocation */
-  int native_return_value = inflateInit2_(native_strm, native_windowBits, native_version, native_stream_size);
-
-  /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
-}
-#endif
-/* MRUBY_BINDING_END */
-
-/* MRUBY_BINDING: inflateInit_ */
-/* sha: 4bcd5be27cd8ada522398781e4b02047379a3cc10ff8916b277c2e23d77aa168 */
-#if BIND_inflateInit__FUNCTION
-#define inflateInit__REQUIRED_ARGC 3
-#define inflateInit__OPTIONAL_ARGC 0
-/* int inflateInit_(z_stream * strm, const char * version, int stream_size) */
-mrb_value
-mrb_ZLib_inflateInit_(mrb_state* mrb, mrb_value self) {
-  mrb_value strm;
-  char * native_version = NULL;
-  mrb_int native_stream_size;
-
-  /* Fetch the args */
-  mrb_get_args(mrb, "ozi", &strm, &native_version, &native_stream_size);
-
-  /* Type checking */
-  if (!mrb_obj_is_kind_of(mrb, strm, ZStream_class(mrb))) {
-    mrb_raise(mrb, E_TYPE_ERROR, "ZStream expected");
-    return mrb_nil_value();
-  }
-
-  /* Unbox param: strm */
-  z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
-
-  /* Invocation */
-  int native_return_value = inflateInit_(native_strm, native_version, native_stream_size);
-
-  /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2295,9 +2079,8 @@ mrb_ZLib_inflatePrime(mrb_state* mrb, mrb_value self) {
   int native_return_value = inflatePrime(native_strm, native_bits, native_value);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2328,9 +2111,8 @@ mrb_ZLib_inflateReset(mrb_state* mrb, mrb_value self) {
   int native_return_value = inflateReset(native_strm);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2362,9 +2144,8 @@ mrb_ZLib_inflateReset2(mrb_state* mrb, mrb_value self) {
   int native_return_value = inflateReset2(native_strm, native_windowBits);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2395,9 +2176,8 @@ mrb_ZLib_inflateResetKeep(mrb_state* mrb, mrb_value self) {
   int native_return_value = inflateResetKeep(native_arg1);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2434,9 +2214,8 @@ mrb_ZLib_inflateSetDictionary(mrb_state* mrb, mrb_value self) {
   int native_return_value = inflateSetDictionary(native_strm, native_dictionary, native_dictLength);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2467,9 +2246,8 @@ mrb_ZLib_inflateSync(mrb_state* mrb, mrb_value self) {
   int native_return_value = inflateSync(native_strm);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2500,9 +2278,8 @@ mrb_ZLib_inflateSyncPoint(mrb_state* mrb, mrb_value self) {
   int native_return_value = inflateSyncPoint(native_arg1);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2534,9 +2311,8 @@ mrb_ZLib_inflateUndermine(mrb_state* mrb, mrb_value self) {
   int native_return_value = inflateUndermine(native_arg1, native_arg2);
 
   /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
-  
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2684,7 +2460,7 @@ void mrb_mruby_zlib_gem_init(mrb_state* mrb) {
 /* MRUBY_BINDING_END */
 
 /* MRUBY_BINDING: global_function_definitions */
-/* sha: 7a2afd1a9cae61c0ab2053ea66ff37211922deb8f09ce43036940ee866473a50 */
+/* sha: 8cf71a921131f136cb34d551076e93f3e2af1ee2f81834a96aca29863e302084 */
   /*
    * Global Functions
    */
@@ -2726,12 +2502,6 @@ void mrb_mruby_zlib_gem_init(mrb_state* mrb) {
 #endif
 #if BIND_deflateInit2_FUNCTION
   mrb_define_class_method(mrb, ZLib_module, "deflateInit2", mrb_ZLib_deflateInit2, MRB_ARGS_ARG(deflateInit2_REQUIRED_ARGC, deflateInit2_OPTIONAL_ARGC));
-#endif
-#if BIND_deflateInit2__FUNCTION
-  mrb_define_class_method(mrb, ZLib_module, "deflateInit2_", mrb_ZLib_deflateInit2_, MRB_ARGS_ARG(deflateInit2__REQUIRED_ARGC, deflateInit2__OPTIONAL_ARGC));
-#endif
-#if BIND_deflateInit__FUNCTION
-  mrb_define_class_method(mrb, ZLib_module, "deflateInit_", mrb_ZLib_deflateInit_, MRB_ARGS_ARG(deflateInit__REQUIRED_ARGC, deflateInit__OPTIONAL_ARGC));
 #endif
 #if BIND_deflateParams_FUNCTION
   mrb_define_class_method(mrb, ZLib_module, "deflateParams", mrb_ZLib_deflateParams, MRB_ARGS_ARG(deflateParams_REQUIRED_ARGC, deflateParams_OPTIONAL_ARGC));
@@ -2793,9 +2563,6 @@ void mrb_mruby_zlib_gem_init(mrb_state* mrb) {
 #if BIND_gzgetc_FUNCTION
   mrb_define_class_method(mrb, ZLib_module, "gzgetc", mrb_ZLib_gzgetc, MRB_ARGS_ARG(gzgetc_REQUIRED_ARGC, gzgetc_OPTIONAL_ARGC));
 #endif
-#if BIND_gzgetc__FUNCTION
-  mrb_define_class_method(mrb, ZLib_module, "gzgetc_", mrb_ZLib_gzgetc_, MRB_ARGS_ARG(gzgetc__REQUIRED_ARGC, gzgetc__OPTIONAL_ARGC));
-#endif
 #if BIND_gzgets_FUNCTION
   mrb_define_class_method(mrb, ZLib_module, "gzgets", mrb_ZLib_gzgets, MRB_ARGS_ARG(gzgets_REQUIRED_ARGC, gzgets_OPTIONAL_ARGC));
 #endif
@@ -2841,9 +2608,6 @@ void mrb_mruby_zlib_gem_init(mrb_state* mrb) {
 #if BIND_inflateBackEnd_FUNCTION
   mrb_define_class_method(mrb, ZLib_module, "inflateBackEnd", mrb_ZLib_inflateBackEnd, MRB_ARGS_ARG(inflateBackEnd_REQUIRED_ARGC, inflateBackEnd_OPTIONAL_ARGC));
 #endif
-#if BIND_inflateBackInit__FUNCTION
-  mrb_define_class_method(mrb, ZLib_module, "inflateBackInit_", mrb_ZLib_inflateBackInit_, MRB_ARGS_ARG(inflateBackInit__REQUIRED_ARGC, inflateBackInit__OPTIONAL_ARGC));
-#endif
 #if BIND_inflateCopy_FUNCTION
   mrb_define_class_method(mrb, ZLib_module, "inflateCopy", mrb_ZLib_inflateCopy, MRB_ARGS_ARG(inflateCopy_REQUIRED_ARGC, inflateCopy_OPTIONAL_ARGC));
 #endif
@@ -2861,12 +2625,6 @@ void mrb_mruby_zlib_gem_init(mrb_state* mrb) {
 #endif
 #if BIND_inflateInit2_FUNCTION
   mrb_define_class_method(mrb, ZLib_module, "inflateInit2", mrb_ZLib_inflateInit2, MRB_ARGS_ARG(inflateInit2_REQUIRED_ARGC, inflateInit2_OPTIONAL_ARGC));
-#endif
-#if BIND_inflateInit2__FUNCTION
-  mrb_define_class_method(mrb, ZLib_module, "inflateInit2_", mrb_ZLib_inflateInit2_, MRB_ARGS_ARG(inflateInit2__REQUIRED_ARGC, inflateInit2__OPTIONAL_ARGC));
-#endif
-#if BIND_inflateInit__FUNCTION
-  mrb_define_class_method(mrb, ZLib_module, "inflateInit_", mrb_ZLib_inflateInit_, MRB_ARGS_ARG(inflateInit__REQUIRED_ARGC, inflateInit__OPTIONAL_ARGC));
 #endif
 #if BIND_inflateMark_FUNCTION
   mrb_define_class_method(mrb, ZLib_module, "inflateMark", mrb_ZLib_inflateMark, MRB_ARGS_ARG(inflateMark_REQUIRED_ARGC, inflateMark_OPTIONAL_ARGC));
