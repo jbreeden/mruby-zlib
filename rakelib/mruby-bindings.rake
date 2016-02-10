@@ -13,7 +13,7 @@ namespace :bindings do
     end
     
     headers.each do |header|
-      sh "clang2json #{header} | egrep -v 'FunctionDecl.*\"name\": \"[^\"]+_\"' >> declarations.json"
+      sh "clang2json #{header} | egrep -v 'FunctionDecl.*\"name\": \"(gzclose_w|gzclose_r|[^\"]+_\")' >> declarations.json"
     end
   end
   

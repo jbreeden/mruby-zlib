@@ -116,7 +116,8 @@ These functions provide IO for GZip files similar to C's stdlib `fopen`, `fread`
 
 - `ZLib.gzclose(file)`
   + Closes the given GZFile `file`
-  + After a file is closed, write & flush still appear to work (no exceptions), but have no affect
+  + Is called automatically when the file is GC'ed, but you may still call it sooner
+  + After a file is closed, any attempt to use it will raise a `ZLib::ZIOError`
 
 _The following functions marked [SKIPPED] are implemented already, but lacking automated tests._
 
@@ -172,4 +173,4 @@ _The following functions marked [SKIPPED] are implemented already, but lacking a
   + [SKIPPED] Reads until a newline or eof
 
 
-SUCCESS [0 failed, 19 skipped, 50 total]
+SUCCESS [0 failed, 19 skipped, 51 total]

@@ -303,21 +303,20 @@ EOS
       # Covered in the "write after close" test
     end
     
-    it 'After a file is closed, write & flush still appear to work (no exceptions), but have no affect' do
+    it 'Is called automatically when the file is GC\'ed, but you may still call it sooner' do
+    end
+    
+    it 'After a file is closed, any attempt to use it will raise a `ZLib::ZIOError`' do
       f = ZLib.gzopen('gzwrite.gz', 'w')
-      assert(!f.nil?)
-      ZLib.gzwrite(f, $src)
+      assert(!f.nil?)      
       ZLib.gzclose(f)
+
+      assert_raises(ZLib::ZIOError) { ZLib.gzclose(f) }
+      assert_raises(ZLib::ZIOError) { ZLib.gzwrite(f, 'x' * 16) }
+      assert_raises(ZLib::ZIOError) { ZLib.gzflush(f, ZLib::Z_FINISH) }
+      assert_raises(ZLib::ZIOError) { ZLib.gzgetc(f) }
+      assert_raises(ZLib::ZIOError) { ZLib.gzungetc('c'.ord, f) }
       
-      assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      assert 16 == ZLib.gzwrite(f, 'x' * 16)
-      ZLib.gzflush(f, ZLib::Z_FINISH)
-      
-      f = ZLib.gzopen('gzwrite.gz', 'r')
-      content = ZLib.gzread(f, 10000)
-      assert content == $src
       File.delete('gzwrite.gz')
     end
   end

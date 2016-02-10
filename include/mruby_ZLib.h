@@ -58,6 +58,10 @@ typedef struct {
   char * buffer_start;
   mruby_zlib_stream_type type;
 } mruby_z_stream;
+
+typedef struct {
+  int closed;
+} mruby_zlib_file_status;
 /* MRUBY_BINDING_END */
 
 /*
@@ -81,6 +85,7 @@ typedef struct {
 #define InternalState_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "InternalState")
 #define ZStream_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZStream")
 #define ZError_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZError")
+#define ZIOError_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZIOError")
 #define ZSystemCallError_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZSystemCallError")
 #define ZStreamError_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZStreamError")
 #define ZBufferError_class(mrb) mrb_class_get_under(mrb, ZLib_module(mrb), "ZBufferError")

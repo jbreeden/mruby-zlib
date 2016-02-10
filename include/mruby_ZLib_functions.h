@@ -25,8 +25,6 @@
 #define BIND_gzbuffer_FUNCTION TRUE
 #define BIND_gzclearerr_FUNCTION TRUE
 #define BIND_gzclose_FUNCTION TRUE
-#define BIND_gzclose_r_FUNCTION TRUE
-#define BIND_gzclose_w_FUNCTION TRUE
 #define BIND_gzdirect_FUNCTION TRUE
 #define BIND_gzdopen_FUNCTION TRUE
 #define BIND_gzeof_FUNCTION TRUE
