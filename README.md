@@ -31,6 +31,7 @@ These functions provide a streaming interface for zlib & gzip compression.
 - `ZLib::deflateInit(stream, level = ZLib::Z_DEFAULT_COMPRESSION)`
   + Initalizes a stream to deflate at the given `level`
   + `level` defaults to 6 (ZLib::Z_DEFAULT_COMPRESSION)
+  + Raises a `ZLib::ZStreamError` if called on a previously initialized stream
 
 - `ZLib.deflate(stream, flush)`
   + Deflates all of `stream.next_in`, possibly returning a chunk of the compressed output
@@ -40,6 +41,7 @@ These functions provide a streaming interface for zlib & gzip compression.
 
 - `ZLib::inflateInit(stream)`
   + Initalizes a stream to inflate data
+  + Raises a `ZLib::ZStreamError` if called on a previously initialized stream
 
 - `ZLib.inflate(stream, flush)`
   + Inflates `str`, possibly returning a chunk of the uncompressed output
@@ -130,4 +132,4 @@ _The following functions marked [SKIPPED] are implemented already, but lacking a
   + [SKIPPED] Reads until a newline or eof
 
 
-SUCCESS [0 failed, 19 skipped, 48 total]
+SUCCESS [0 failed, 19 skipped, 50 total]
