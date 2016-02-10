@@ -2397,9 +2397,6 @@ void mrb_mruby_zlib_gem_init(mrb_state* mrb) {
 #if BIND_GZHeader_TYPE
   mrb_ZLib_GZHeader_init(mrb);
 #endif
-#if BIND_InternalState_TYPE
-  mrb_ZLib_InternalState_init(mrb);
-#endif
 #if BIND_ZStream_TYPE
   mrb_ZLib_ZStream_init(mrb);
 #endif
