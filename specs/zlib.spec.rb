@@ -14,7 +14,7 @@ TODO: Provide a way to "silence" test-only output for documentation generation.
       (Maybe useful for seriously obscure test cases, but mainly as a dual for the above.)
 =end
 
-ZLib::Spec.new("ZLib") do
+ZLib::Spec.new("mruby-zlib") do
   blurb <<-EOS
 Bindings to ZLib for MRuby.
 

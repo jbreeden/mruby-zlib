@@ -1,6 +1,6 @@
 
-ZLib
-----
+mruby-zlib
+----------
 
 Bindings to ZLib for MRuby.
 
