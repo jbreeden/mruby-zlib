@@ -29,6 +29,25 @@ blurb <<-EOS
 `compress` & `uncompress` provide a simple API for bulk compression. `compress`
 produces a deflate stream wrapped in a zlib header, and `uncompress` reverses
 that action.
+
+Example:
+
+```Ruby
+src = 'test' * 10
+# => "testtesttesttesttesttesttesttesttesttest"
+
+src.length
+# => 40
+
+compressed = ZLib.compress(src)
+# => "x\234+I-.)!\002\003\000f\261\021\201"
+
+compressed.length
+# => 15
+
+ZLib.uncompress(src.length, compressed)
+# => "testtesttesttesttesttesttesttesttesttest"
+```
 EOS
   
   desc '`ZLib.compress(src)`' do
@@ -65,6 +84,27 @@ blurb <<-EOS
 ### `inflate` & `deflate`
 
 These functions provide a streaming interface for zlib & gzip compression.
+
+Example:
+
+```Ruby
+src = "example" * 100
+
+stream = ZLib::ZStream.new
+ZLib.deflateInit(stream)
+stream.next_in = src
+compressed = ZLib.deflate(stream, ZLib::Z_FINISH)
+# => "x\234K\255H\314-\310IM\035\245F\251\241F\001\000)h$@"
+
+compressed.length
+# => 22
+
+stream = ZLib::ZStream.new
+ZLib.inflateInit(stream)
+stream.next_in = compressed
+ZLib.inflate(stream, ZLib::Z_FINISH)
+# => "exampleexampleexampleexampleexampleexampleexampleexampleexampleexample...
+```
 EOS
 
   desc '`ZLib::deflateInit(stream, level = ZLib::Z_DEFAULT_COMPRESSION)`' do
