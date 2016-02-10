@@ -4,6 +4,7 @@
 /* sha: user_defined */
 #include <errno.h>
 #include <stdio.h>
+#include <string.h>
 
 void
 raise_zlib_errno(mrb_state * mrb, int err) {
@@ -52,7 +53,7 @@ extern "C" {
 mrb_value
 mrb_ZLib_adler32(mrb_state* mrb, mrb_value self) {
   mrb_int native_adler;
-  char * native_buf = NULL;
+  Bytef * native_buf = NULL;
   mrb_int len = 0;
 
   /* Fetch the args */
@@ -194,7 +195,7 @@ mrb_ZLib_compressBound(mrb_state* mrb, mrb_value self) {
 mrb_value
 mrb_ZLib_crc32(mrb_state* mrb, mrb_value self) {
   mrb_int native_crc;
-  char * native_buf = NULL;
+  Bytef * native_buf = NULL;
   mrb_int len = 0;
 
   /* Fetch the args */
@@ -276,7 +277,7 @@ mrb_ZLib_deflate(mrb_state* mrb, mrb_value self) {
     native_strm->avail_in = 0;
   } else {
     mrb_value next_in_as_str = mrb_str_to_str(mrb, next_in);
-    native_strm->next_in = RSTRING_PTR(next_in_as_str);
+    native_strm->next_in = (Bytef *)RSTRING_PTR(next_in_as_str);
     native_strm->avail_in = RSTRING_LEN(next_in_as_str);
   }
     
@@ -289,7 +290,7 @@ mrb_ZLib_deflate(mrb_state* mrb, mrb_value self) {
     if (ready_out > 0) {
       mrb_str_cat(mrb, result, buffer_start, ready_out);
     }
-    native_strm->next_out = buffer_start;
+    native_strm->next_out = (Byte *)buffer_start;
     native_strm->avail_out = buffer_size;
     
     /* Normally (when not flushing) we only invoke if there is input available.
@@ -540,43 +541,43 @@ mrb_ZLib_deflateParams(mrb_state* mrb, mrb_value self) {
 
 /* MRUBY_BINDING: deflatePending */
 /* sha: e1f2c4c51562b01390d49a170c8e21d6021c3257b35189056fb76314e818c433 */
-//// TODO: This isn't defined in the headers I'm building against.
-// #if BIND_deflatePending_FUNCTION
-// #define deflatePending_REQUIRED_ARGC 1
-// #define deflatePending_OPTIONAL_ARGC 0
-// /* int deflatePending(z_stream * strm, unsigned int * pending, int * bits) */
-// mrb_value
-// mrb_ZLib_deflatePending(mrb_state* mrb, mrb_value self) {
-//   mrb_value strm;
-// 
-//   /* Fetch the args */
-//   mrb_get_args(mrb, "o", &strm);
-// 
-//   /* Type checking */
-//   if (!mrb_obj_is_kind_of(mrb, strm, ZStream_class(mrb))) {
-//     mrb_raise(mrb, E_TYPE_ERROR, "ZStream expected");
-//     return mrb_nil_value();
-//   }
-// 
-//   /* Unbox param: strm */
-//   z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
-// 
-//   /* Invocation */
-//   int native_pending = 0;
-//   int native_bits = 0;
-//   int native_return_value = deflatePending(native_strm, &native_pending, &native_bits);
-// 
-//   if (native_return_value == Z_OK) {
-//     mrb_value result = mrb_ary_new(mrb);
-//     mrb_ary_push(mrb, result, mrb_fixnum_value(native_pending));
-//     mrb_ary_push(mrb, result, mrb_fixnum_value(native_bits));
-//     return result;
-//   } else {
-//     mrb_raise(mrb, ZError_class(mrb), zError(native_return_value));
-//     return mrb_nil_value();
-//   }
-// }
-// #endif
+// TODO: This isn't defined in the headers I'm building against.
+#if BIND_deflatePending_FUNCTION
+#define deflatePending_REQUIRED_ARGC 1
+#define deflatePending_OPTIONAL_ARGC 0
+/* int deflatePending(z_stream * strm, unsigned int * pending, int * bits) */
+mrb_value
+mrb_ZLib_deflatePending(mrb_state* mrb, mrb_value self) {
+  mrb_value strm;
+
+  /* Fetch the args */
+  mrb_get_args(mrb, "o", &strm);
+
+  /* Type checking */
+  if (!mrb_obj_is_kind_of(mrb, strm, ZStream_class(mrb))) {
+    mrb_raise(mrb, E_TYPE_ERROR, "ZStream expected");
+    return mrb_nil_value();
+  }
+
+  /* Unbox param: strm */
+  z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
+
+  /* Invocation */
+  int native_pending = 0;
+  int native_bits = 0;
+  int native_return_value = deflatePending(native_strm, &native_pending, &native_bits);
+
+  if (native_return_value == Z_OK) {
+    mrb_value result = mrb_ary_new(mrb);
+    mrb_ary_push(mrb, result, mrb_fixnum_value(native_pending));
+    mrb_ary_push(mrb, result, mrb_fixnum_value(native_bits));
+    return result;
+  } else {
+    mrb_raise(mrb, ZError_class(mrb), zError(native_return_value));
+    return mrb_nil_value();
+  }
+}
+#endif
 /* MRUBY_BINDING_END */
 
 /* MRUBY_BINDING: deflatePrime */
@@ -815,7 +816,7 @@ mrb_ZLib_get_crc_table(mrb_state* mrb, mrb_value self) {
 #if BIND_gzbuffer_FUNCTION
 #define gzbuffer_REQUIRED_ARGC 2
 #define gzbuffer_OPTIONAL_ARGC 0
-/* int gzbuffer(gzFile * file, unsigned int size) */
+/* int gzbuffer(gzFile file, unsigned int size) */
 mrb_value
 mrb_ZLib_gzbuffer(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -849,7 +850,7 @@ mrb_ZLib_gzbuffer(mrb_state* mrb, mrb_value self) {
 #if BIND_gzclearerr_FUNCTION
 #define gzclearerr_REQUIRED_ARGC 1
 #define gzclearerr_OPTIONAL_ARGC 0
-/* void gzclearerr(gzFile * file) */
+/* void gzclearerr(gzFile file) */
 mrb_value
 mrb_ZLib_gzclearerr(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -865,7 +866,7 @@ mrb_ZLib_gzclearerr(mrb_state* mrb, mrb_value self) {
   ASSERT_GZFILE_OPEN(mrb, file);
 
   /* Unbox param: file */
-  gzFile * native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
+  gzFile native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
 
   /* Invocation */
   gzclearerr(native_file);
@@ -880,7 +881,7 @@ mrb_ZLib_gzclearerr(mrb_state* mrb, mrb_value self) {
 #if BIND_gzclose_FUNCTION
 #define gzclose_REQUIRED_ARGC 1
 #define gzclose_OPTIONAL_ARGC 0
-/* int gzclose(gzFile * file) */
+/* int gzclose(gzFile file) */
 mrb_value
 mrb_ZLib_gzclose(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -896,7 +897,7 @@ mrb_ZLib_gzclose(mrb_state* mrb, mrb_value self) {
   ASSERT_GZFILE_OPEN(mrb, file);
 
   /* Unbox param: file */
-  gzFile * native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
+  gzFile native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
 
   /* Invocation */
   int native_return_value = gzclose(native_file);
@@ -915,7 +916,7 @@ mrb_ZLib_gzclose(mrb_state* mrb, mrb_value self) {
 #if BIND_gzdirect_FUNCTION
 #define gzdirect_REQUIRED_ARGC 1
 #define gzdirect_OPTIONAL_ARGC 0
-/* int gzdirect(gzFile * file) */
+/* int gzdirect(gzFile file) */
 mrb_value
 mrb_ZLib_gzdirect(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -931,7 +932,7 @@ mrb_ZLib_gzdirect(mrb_state* mrb, mrb_value self) {
   ASSERT_GZFILE_OPEN(mrb, file);
 
   /* Unbox param: file */
-  gzFile * native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
+  gzFile native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
 
   /* Invocation */
   int native_return_value = gzdirect(native_file);
@@ -946,7 +947,7 @@ mrb_ZLib_gzdirect(mrb_state* mrb, mrb_value self) {
 #if BIND_gzdopen_FUNCTION
 #define gzdopen_REQUIRED_ARGC 2
 #define gzdopen_OPTIONAL_ARGC 0
-/* gzFile * gzdopen(int fd, const char * mode) */
+/* gzFile gzdopen(int fd, const char * mode) */
 mrb_value
 mrb_ZLib_gzdopen(mrb_state* mrb, mrb_value self) {
   mrb_int native_fd;
@@ -956,7 +957,7 @@ mrb_ZLib_gzdopen(mrb_state* mrb, mrb_value self) {
   mrb_get_args(mrb, "iz", &native_fd, &native_mode);
 
   /* Invocation */
-  gzFile * native_return_value = gzdopen(native_fd, native_mode);
+  gzFile native_return_value = gzdopen(native_fd, native_mode);
 
   /* Box the return value */
   mrb_value return_value = (native_return_value == NULL ? mrb_nil_value() : mruby_box_gzFile(mrb, native_return_value));
@@ -971,7 +972,7 @@ mrb_ZLib_gzdopen(mrb_state* mrb, mrb_value self) {
 #if BIND_gzeof_FUNCTION
 #define gzeof_REQUIRED_ARGC 1
 #define gzeof_OPTIONAL_ARGC 0
-/* int gzeof(gzFile * file) */
+/* int gzeof(gzFile file) */
 mrb_value
 mrb_ZLib_gzeof(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1003,7 +1004,7 @@ mrb_ZLib_gzeof(mrb_state* mrb, mrb_value self) {
 #if BIND_gzerror_FUNCTION
 #define gzerror_REQUIRED_ARGC 2
 #define gzerror_OPTIONAL_ARGC 0
-/* const char * gzerror(gzFile * file, int * errnum) */
+/* const char * gzerror(gzFile file, int * errnum) */
 mrb_value
 mrb_ZLib_gzerror(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1019,7 +1020,7 @@ mrb_ZLib_gzerror(mrb_state* mrb, mrb_value self) {
   ASSERT_GZFILE_OPEN(mrb, file);
 
   /* Unbox param: file */
-  gzFile * native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
+  gzFile native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
 
   /* Invocation */
   int err = 0;
@@ -1035,7 +1036,7 @@ mrb_ZLib_gzerror(mrb_state* mrb, mrb_value self) {
 #if BIND_gzflush_FUNCTION
 #define gzflush_REQUIRED_ARGC 2
 #define gzflush_OPTIONAL_ARGC 0
-/* int gzflush(gzFile * file, int flush) */
+/* int gzflush(gzFile file, int flush) */
 mrb_value
 mrb_ZLib_gzflush(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1070,7 +1071,7 @@ mrb_ZLib_gzflush(mrb_state* mrb, mrb_value self) {
 #if BIND_gzgetc_FUNCTION
 #define gzgetc_REQUIRED_ARGC 1
 #define gzgetc_OPTIONAL_ARGC 0
-/* int gzgetc(gzFile * file) */
+/* int gzgetc(gzFile file) */
 mrb_value
 mrb_ZLib_gzgetc(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1109,7 +1110,7 @@ mrb_ZLib_gzgetc(mrb_state* mrb, mrb_value self) {
 #if BIND_gzgets_FUNCTION
 #define gzgets_REQUIRED_ARGC 1
 #define gzgets_OPTIONAL_ARGC 1
-/* char * gzgets(gzFile * file, char * buf, int len) */
+/* char * gzgets(gzFile file, char * buf, int len) */
 mrb_value
 mrb_ZLib_gzgets(mrb_state* mrb, mrb_value self) {
   mrb_value file = mrb_nil_value();
@@ -1157,7 +1158,7 @@ mrb_ZLib_gzgets(mrb_state* mrb, mrb_value self) {
 #if BIND_gzoffset_FUNCTION
 #define gzoffset_REQUIRED_ARGC 1
 #define gzoffset_OPTIONAL_ARGC 0
-/* long gzoffset(gzFile * file) */
+/* long gzoffset(gzFile file) */
 mrb_value
 mrb_ZLib_gzoffset(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1173,7 +1174,7 @@ mrb_ZLib_gzoffset(mrb_state* mrb, mrb_value self) {
   ASSERT_GZFILE_OPEN(mrb, file);
 
   /* Unbox param: file */
-  gzFile * native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
+  gzFile native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
 
   /* Invocation */
   long native_return_value = gzoffset(native_file);
@@ -1196,7 +1197,7 @@ mrb_ZLib_gzoffset(mrb_state* mrb, mrb_value self) {
 #if BIND_gzopen_FUNCTION
 #define gzopen_REQUIRED_ARGC 2
 #define gzopen_OPTIONAL_ARGC 0
-/* gzFile * gzopen(const char * path, const char * mode) */
+/* gzFile gzopen(const char * path, const char * mode) */
 mrb_value
 mrb_ZLib_gzopen(mrb_state* mrb, mrb_value self) {
   char * native_path = NULL;
@@ -1221,7 +1222,7 @@ mrb_ZLib_gzopen(mrb_state* mrb, mrb_value self) {
 #if BIND_gzputc_FUNCTION
 #define gzputc_REQUIRED_ARGC 2
 #define gzputc_OPTIONAL_ARGC 0
-/* int gzputc(gzFile * file, int c) */
+/* int gzputc(gzFile file, int c) */
 mrb_value
 mrb_ZLib_gzputc(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1261,7 +1262,7 @@ mrb_ZLib_gzputc(mrb_state* mrb, mrb_value self) {
 #if BIND_gzputs_FUNCTION
 #define gzputs_REQUIRED_ARGC 2
 #define gzputs_OPTIONAL_ARGC 0
-/* int gzputs(gzFile * file, const char * s) */
+/* int gzputs(gzFile file, const char * s) */
 mrb_value
 mrb_ZLib_gzputs(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1301,7 +1302,7 @@ mrb_ZLib_gzputs(mrb_state* mrb, mrb_value self) {
 #if BIND_gzread_FUNCTION
 #define gzread_REQUIRED_ARGC 2
 #define gzread_OPTIONAL_ARGC 0
-/* int gzread(gzFile * file, voidp buf, unsigned int len) */
+/* int gzread(gzFile file, voidp buf, unsigned int len) */
 mrb_value
 mrb_ZLib_gzread(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1356,7 +1357,7 @@ mrb_ZLib_gzread(mrb_state* mrb, mrb_value self) {
 #if BIND_gzrewind_FUNCTION
 #define gzrewind_REQUIRED_ARGC 1
 #define gzrewind_OPTIONAL_ARGC 0
-/* int gzrewind(gzFile * file) */
+/* int gzrewind(gzFile file) */
 mrb_value
 mrb_ZLib_gzrewind(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1390,7 +1391,7 @@ mrb_ZLib_gzrewind(mrb_state* mrb, mrb_value self) {
 #if BIND_gzseek_FUNCTION
 #define gzseek_REQUIRED_ARGC 3
 #define gzseek_OPTIONAL_ARGC 0
-/* long gzseek(gzFile * file, long offset, int whence) */
+/* long gzseek(gzFile file, long offset, int whence) */
 mrb_value
 mrb_ZLib_gzseek(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1408,7 +1409,7 @@ mrb_ZLib_gzseek(mrb_state* mrb, mrb_value self) {
   ASSERT_GZFILE_OPEN(mrb, file);
 
   /* Unbox param: file */
-  gzFile * native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
+  gzFile native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
 
   /* Invocation */
   long native_return_value = gzseek(native_file, native_offset, native_whence);
@@ -1426,7 +1427,7 @@ mrb_ZLib_gzseek(mrb_state* mrb, mrb_value self) {
 #if BIND_gzsetparams_FUNCTION
 #define gzsetparams_REQUIRED_ARGC 3
 #define gzsetparams_OPTIONAL_ARGC 0
-/* int gzsetparams(gzFile * file, int level, int strategy) */
+/* int gzsetparams(gzFile file, int level, int strategy) */
 mrb_value
 mrb_ZLib_gzsetparams(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1465,7 +1466,7 @@ mrb_ZLib_gzsetparams(mrb_state* mrb, mrb_value self) {
 #if BIND_gztell_FUNCTION
 #define gztell_REQUIRED_ARGC 1
 #define gztell_OPTIONAL_ARGC 0
-/* long gztell(gzFile * file) */
+/* long gztell(gzFile file) */
 mrb_value
 mrb_ZLib_gztell(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1481,7 +1482,7 @@ mrb_ZLib_gztell(mrb_state* mrb, mrb_value self) {
   ASSERT_GZFILE_OPEN(mrb, file);
 
   /* Unbox param: file */
-  gzFile * native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
+  gzFile native_file = (mrb_nil_p(file) ? NULL : mruby_unbox_gzFile(file));
 
   /* Invocation */
   long native_return_value = gztell(native_file);
@@ -1499,7 +1500,7 @@ mrb_ZLib_gztell(mrb_state* mrb, mrb_value self) {
 #if BIND_gzungetc_FUNCTION
 #define gzungetc_REQUIRED_ARGC 2
 #define gzungetc_OPTIONAL_ARGC 0
-/* int gzungetc(int c, gzFile * file) */
+/* int gzungetc(int c, gzFile file) */
 mrb_value
 mrb_ZLib_gzungetc(mrb_state* mrb, mrb_value self) {
   mrb_int native_c;
@@ -1539,7 +1540,7 @@ mrb_ZLib_gzungetc(mrb_state* mrb, mrb_value self) {
 #if BIND_gzwrite_FUNCTION
 #define gzwrite_REQUIRED_ARGC 2
 #define gzwrite_OPTIONAL_ARGC 0
-/* int gzwrite(gzFile * file, voidpc buf, unsigned int len) */
+/* int gzwrite(gzFile file, voidpc buf, unsigned int len) */
 mrb_value
 mrb_ZLib_gzwrite(mrb_state* mrb, mrb_value self) {
   mrb_value file;
@@ -1614,7 +1615,7 @@ mrb_ZLib_inflate(mrb_state* mrb, mrb_value self) {
     native_strm->avail_in = 0;
   } else {
     mrb_value next_in_as_str = mrb_str_to_str(mrb, next_in);
-    native_strm->next_in = RSTRING_PTR(next_in_as_str);
+    native_strm->next_in = (Bytef *)RSTRING_PTR(next_in_as_str);
     native_strm->avail_in = RSTRING_LEN(next_in_as_str);
   }
     
@@ -1627,7 +1628,7 @@ mrb_ZLib_inflate(mrb_state* mrb, mrb_value self) {
     if (ready_out > 0) {
       mrb_str_cat(mrb, result, buffer_start, ready_out);
     }
-    native_strm->next_out = buffer_start;
+    native_strm->next_out = (Byte *)buffer_start;
     native_strm->avail_out = buffer_size;
     
     /* Normally (when not flushing) we only invoke if there is input available.
@@ -1648,12 +1649,6 @@ mrb_ZLib_inflate(mrb_state* mrb, mrb_value self) {
 
   return result;
 }
-/* Buffer error on no available input is not an error condition,
-   so don't raise it unless avail_in != 0
- */
-// if (result != Z_OK && (result != Z_BUF_ERROR || native_strm->avail_in != 0)) {
-//   raise_zlib_errno(mrb, result);
-// }
 #endif
 /* MRUBY_BINDING_END */
 

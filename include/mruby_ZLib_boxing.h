@@ -45,18 +45,18 @@ typedef struct mruby_to_native_ref_ {
 /* sha: d6bcf076df63aa68840dd96e2e9ae4c7a0b1b8d7c26ccde6b4b53120a7a21918 */
 #if BIND_GZFile_TYPE
 mrb_value
-mruby_box_gzFile(mrb_state* mrb, gzFile *unboxed);
+mruby_box_gzFile(mrb_state* mrb, gzFile unboxed);
 
 mrb_value
-mruby_giftwrap_gzFile(mrb_state* mrb, gzFile *unboxed);
+mruby_giftwrap_gzFile(mrb_state* mrb, gzFile unboxed);
 
 void
-mruby_set_gzFile_data_ptr(mrb_value obj, gzFile *unboxed);
+mruby_set_gzFile_data_ptr(mrb_value obj, gzFile unboxed);
 
 void
-mruby_gift_gzFile_data_ptr(mrb_value obj, gzFile *unboxed);
+mruby_gift_gzFile_data_ptr(mrb_value obj, gzFile unboxed);
 
-gzFile *
+gzFile
 mruby_unbox_gzFile(mrb_value boxed);
 #endif
 /* MRUBY_BINDING_END */

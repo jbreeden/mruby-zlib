@@ -50,7 +50,7 @@ static void free_gzFile(mrb_state* mrb, void* ptr) {
   mruby_to_native_ref* box = (mruby_to_native_ref*)ptr;
   if (box->belongs_to_ruby) {
     if (box->obj != NULL) {
-      gzclose((gzFile *)box->obj);
+      gzclose((gzFile)box->obj);
       box->obj = NULL;
     }
   }
@@ -62,7 +62,7 @@ static const mrb_data_type gzFile_data_type = {
 };
 
 mrb_value
-mruby_box_gzFile(mrb_state* mrb, gzFile *unboxed) {
+mruby_box_gzFile(mrb_state* mrb, gzFile unboxed) {
   mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
   box->belongs_to_ruby = FALSE;
   box->obj = unboxed;
@@ -70,7 +70,7 @@ mruby_box_gzFile(mrb_state* mrb, gzFile *unboxed) {
 }
 
 mrb_value
-mruby_giftwrap_gzFile(mrb_state* mrb, gzFile *unboxed) {
+mruby_giftwrap_gzFile(mrb_state* mrb, gzFile unboxed) {
    mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
    box->belongs_to_ruby = TRUE;
    box->obj = unboxed;
@@ -78,7 +78,7 @@ mruby_giftwrap_gzFile(mrb_state* mrb, gzFile *unboxed) {
 }
 
 void
-mruby_set_gzFile_data_ptr(mrb_value obj, gzFile *unboxed) {
+mruby_set_gzFile_data_ptr(mrb_value obj, gzFile unboxed) {
   mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
   box->belongs_to_ruby = FALSE;
   box->obj = unboxed;
@@ -86,16 +86,16 @@ mruby_set_gzFile_data_ptr(mrb_value obj, gzFile *unboxed) {
 }
 
 void
-mruby_gift_gzFile_data_ptr(mrb_value obj, gzFile *unboxed) {
+mruby_gift_gzFile_data_ptr(mrb_value obj, gzFile unboxed) {
   mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
   box->belongs_to_ruby = TRUE;
   box->obj = unboxed;
   mrb_data_init(obj, box, &gzFile_data_type);
 }
 
-gzFile *
+gzFile
 mruby_unbox_gzFile(mrb_value boxed) {
-  return (gzFile *)((mruby_to_native_ref *)DATA_PTR(boxed))->obj;
+  return (gzFile)((mruby_to_native_ref *)DATA_PTR(boxed))->obj;
 }
 #endif
 /* MRUBY_BINDING_END */
