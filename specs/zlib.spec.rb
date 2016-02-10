@@ -114,7 +114,6 @@ EOS
         ZLib.deflate(s)
       end
     end
-    
   end
   
   desc '`ZLib::inflateInit(stream)`' do
@@ -157,6 +156,35 @@ EOS
     end
     
     it 'Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`' do
+    end
+  end
+  
+  desc '`ZLib.inflateEnd(stream)` && `ZLib.deflateEnd(stream)`' do
+    it 'Are used to cleanup native resources of the stream' do
+    end
+    
+    it 'Called automatically by the MRuby GC when the stream is freed' do
+    end
+    
+    it 'Raise a `ZLib::ZStreamError` if the stream already ended, or is of the wrong type' do
+      s = ZLib::ZStream.new
+      ZLib.deflateInit(s)
+      out = ''
+      s.next_in = $src
+      out << ZLib.deflate(s, ZLib::Z_FINISH)
+      ZLib.deflateEnd(s)
+      assert_raises(ZLib::ZStreamError) { ZLib.deflateEnd(s) }
+      assert_raises(ZLib::ZStreamError) { ZLib.inflateEnd(s) }
+      
+      t = ZLib::ZStream.new
+      ZLib.inflateInit(t)
+      t.next_in = out[0..100]
+      inflated = ZLib.inflate(t, ZLib::Z_FINISH)
+      t.next_in = out[101..(out.length)]
+      inflated = ZLib.inflate(t, ZLib::Z_FINISH)
+      ZLib.inflateEnd(t)
+      assert_raises(ZLib::ZStreamError) { ZLib.inflateEnd(t) }
+      assert_raises(ZLib::ZStreamError) { ZLib.deflateEnd(t) }
     end
   end
   

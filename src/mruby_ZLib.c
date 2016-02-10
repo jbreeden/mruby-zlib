@@ -403,13 +403,15 @@ mrb_ZLib_deflateEnd(mrb_state* mrb, mrb_value self) {
   /* Unbox param: strm */
   z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
 
-  /* Invocation */
-  int native_return_value = deflateEnd(native_strm);
-
-  /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
+  int native_return_value = Z_STREAM_ERROR; /* In case of wrong stream type */
+  if (((mruby_z_stream*)native_strm)->type == DEFLATE_STREAM) {
+     native_return_value = deflateEnd(native_strm);
+     ((mruby_z_stream*)native_strm)->type = UNINITIALIZED_STREAM;
+  }
   
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -436,7 +438,8 @@ mrb_ZLib_deflateInit(mrb_state* mrb, mrb_value self) {
 
   /* Unbox param: strm */
   z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
-
+  ((mruby_z_stream *)native_strm)->type = DEFLATE_STREAM;
+  
   /* Invocation */
   int native_return_value = deflateInit(native_strm, native_level);
 
@@ -474,7 +477,8 @@ mrb_ZLib_deflateInit2(mrb_state* mrb, mrb_value self) {
 
   /* Unbox param: strm */
   z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
-
+  ((mruby_z_stream *)native_strm)->type = DEFLATE_STREAM;
+  
   /* Invocation */
   int native_return_value = deflateInit2(native_strm, native_level, native_method, native_windowBits, native_memLevel, native_strategy);
 
@@ -1993,12 +1997,15 @@ mrb_ZLib_inflateEnd(mrb_state* mrb, mrb_value self) {
   z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
 
   /* Invocation */
-  int native_return_value = inflateEnd(native_strm);
-
-  /* Box the return value */
-  mrb_value return_value = mrb_fixnum_value(native_return_value);
+  int native_return_value = Z_STREAM_ERROR; /* In case of wrong stream type */
+  if (((mruby_z_stream*)native_strm)->type == INFLATE_STREAM) {
+     native_return_value = inflateEnd(native_strm);
+     ((mruby_z_stream*)native_strm)->type = UNINITIALIZED_STREAM;
+  }
   
-  return return_value;
+  raise_zlib_errno(mrb, native_return_value);
+  
+  return mrb_nil_value();
 }
 #endif
 /* MRUBY_BINDING_END */
@@ -2111,6 +2118,7 @@ mrb_ZLib_inflateInit(mrb_state* mrb, mrb_value self) {
 
   /* Invocation */
   int native_return_value = inflateInit(native_strm);
+  ((mruby_z_stream *)native_strm)->type = INFLATE_STREAM;
 
   /* Box the return value */
   mrb_value return_value = mrb_fixnum_value(native_return_value);
@@ -2142,6 +2150,7 @@ mrb_ZLib_inflateInit2(mrb_state* mrb, mrb_value self) {
 
   /* Unbox param: strm */
   z_stream * native_strm = (mrb_nil_p(strm) ? NULL : mruby_unbox_z_stream(strm));
+  ((mruby_z_stream *)native_strm)->type = INFLATE_STREAM;
 
   /* Invocation */
   int native_return_value = inflateInit2(native_strm, native_windowBits);

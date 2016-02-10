@@ -45,10 +45,17 @@
 
 #define BUFFER_SIZE (64 * 1024)
 
+typedef enum {
+  UNINITIALIZED_STREAM,
+  INFLATE_STREAM,
+  DEFLATE_STREAM  
+} mruby_zlib_stream_type;
+
 typedef struct {
   z_stream stream;
   int buffer_size;
   char * buffer_start;
+  mruby_zlib_stream_type type;
 } mruby_z_stream;
 /* MRUBY_BINDING_END */
 

@@ -241,6 +241,11 @@ static void free_z_stream(mrb_state* mrb, void* ptr) {
   if (box->belongs_to_ruby) {
     if (box->obj != NULL) {
       mruby_z_stream * as_stream = (mruby_z_stream *)box->obj;
+      switch (as_stream->type) {
+      case UNINITIALIZED_STREAM: break;
+      case INFLATE_STREAM: inflateEnd(as_stream); break;
+      case DEFLATE_STREAM: deflateEnd(as_stream); break;
+      }
       free(as_stream->buffer_start);
       free(box->obj);
       box->obj = NULL;

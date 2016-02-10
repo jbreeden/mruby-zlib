@@ -26,6 +26,7 @@ mrb_ZLib_ZStream_initialize(mrb_state* mrb, mrb_value self) {
   native_object->stream.avail_out = buffer_size;
   native_object->buffer_size = buffer_size;
   native_object->buffer_start = native_object->stream.next_out;
+  native_object->type = UNINITIALIZED_STREAM;
   
   mruby_gift_z_stream_data_ptr(self, (z_stream*)native_object);
   return self;

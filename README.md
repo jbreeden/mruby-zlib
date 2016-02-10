@@ -46,6 +46,11 @@ These functions provide a streaming interface for zlib & gzip compression.
   + Returns the empty string if the stream has already been finished (TODO: should probably raise)
   + Will process the remaining input and return all output if `flush` is `ZLib::Z_FINISH`
 
+- `ZLib.inflateEnd(stream)` && `ZLib.deflateEnd(stream)`
+  + Are used to cleanup native resources of the stream
+  + Called automatically by the MRuby GC when the stream is freed
+  + Raise a `ZLib::ZStreamError` if the stream already ended, or is of the wrong type
+
 ### `GZFile` APIs
 
 These functions provide IO for GZip files similar to C's stdlib `fopen`, `fread`, `fwrite`, etc.
@@ -125,4 +130,4 @@ _The following functions marked [SKIPPED] are implemented already, but lacking a
   + [SKIPPED] Reads until a newline or eof
 
 
-SUCCESS [0 failed, 19 skipped, 45 total]
+SUCCESS [0 failed, 19 skipped, 48 total]
