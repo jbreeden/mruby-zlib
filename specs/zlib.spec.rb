@@ -40,7 +40,7 @@ src.length
 # => 40
 
 compressed = ZLib.compress(src)
-# => "x\234+I-.)!\002\003\000f\261\021\201"
+# => "x\\234+I-.)!\\002\\003\\000f\\261\\021\\201"
 
 compressed.length
 # => 15
@@ -94,7 +94,7 @@ stream = ZLib::ZStream.new
 ZLib.deflateInit(stream)
 stream.next_in = src
 compressed = ZLib.deflate(stream, ZLib::Z_FINISH)
-# => "x\234K\255H\314-\310IM\035\245F\251\241F\001\000)h$@"
+# => "x\\234K\\255H\\314-\\310IM\\035\\245F\\251\\241F\\001\\000)h$@"
 
 compressed.length
 # => 22
