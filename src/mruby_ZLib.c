@@ -1209,7 +1209,7 @@ mrb_ZLib_gzopen(mrb_state* mrb, mrb_value self) {
   gzFile native_return_value = gzopen(native_path, native_mode);
 
   /* Box the return value */
-  mrb_value return_value = (native_return_value == NULL ? mrb_nil_value() : mruby_box_gzFile(mrb, native_return_value));
+  mrb_value return_value = (native_return_value == NULL ? mrb_nil_value() : mruby_giftwrap_gzFile(mrb, native_return_value));
   
   return return_value;
 }

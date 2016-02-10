@@ -257,7 +257,7 @@ EOS
     end
     
     it 'Returns `nil` if trying to read a file that doesn\'t exist' do
-      assert ZLib.gzopen('dne.gzip', 'r').nil?
+      assert ZLib.gzopen('dnednednednednedne.gzip', 'r').nil?
     end
   end
   
