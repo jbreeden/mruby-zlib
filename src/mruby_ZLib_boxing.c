@@ -66,7 +66,6 @@ mruby_box_gzFile(mrb_state* mrb, gzFile *unboxed) {
   mruby_to_native_ref* box = (mruby_to_native_ref*)malloc(sizeof(mruby_to_native_ref));
   box->belongs_to_ruby = FALSE;
   box->obj = unboxed;
-  box->data = calloc(1, sizeof(mruby_zlib_file_status));
   return mrb_obj_value(Data_Wrap_Struct(mrb, GZFile_class(mrb), &gzFile_data_type, box));
 }
 

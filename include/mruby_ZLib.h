@@ -58,10 +58,6 @@ typedef struct {
   char * buffer_start;
   mruby_zlib_stream_type type;
 } mruby_z_stream;
-
-typedef struct {
-  int closed;
-} mruby_zlib_file_status;
 /* MRUBY_BINDING_END */
 
 /*
